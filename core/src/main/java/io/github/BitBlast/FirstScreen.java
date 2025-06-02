@@ -1,16 +1,18 @@
 package io.github.BitBlast;
 
+import Helper.Constants;
+import Helper.Player;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.Input;
 
 /** First screen of the application. Displayed after the application is created. */
 public class FirstScreen implements Screen {
@@ -18,6 +20,17 @@ public class FirstScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
+    private Player player;
+
+    private Texture redBlock;
+    private Texture orangeBlock;
+    private Texture yellowBlock;
+    private Texture greenBlock;
+    private Texture blueBlock;
+    private Texture indigoBlock;
+    private Texture violetBlock;
+
+    public float baseY;
 
     public FirstScreen(OrthographicCamera camera) {
         this.camera = camera;
@@ -27,12 +40,18 @@ public class FirstScreen implements Screen {
 
     @Override
     public void show() {
-        // Prepare your screen here.
+        this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
+        baseY = Constants.startY;
     }
 
     @Override
     public void render(float delta) {
-        update();
+        Texture[] rainbowBlocks = {
+            redBlock, orangeBlock, yellowBlock, greenBlock,
+            blueBlock, indigoBlock, violetBlock
+        };
+
+        update(delta);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -41,23 +60,85 @@ public class FirstScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
 
-        //cube stuff
+        shapeRenderer.rect(this.player.getX(), this.player.getY(), this.player.getWidth(), this.player.getHeight());
+
+        shapeRenderer.end();
+
+        Color[] rainbowColors = {
+            Color.RED,
+            Color.ORANGE,
+            Color.YELLOW,
+            Color.GREEN,
+            Color.BLUE,
+            new Color(75 / 255f, 0, 130 / 255f, 1), // Indigo
+            new Color(143 / 255f, 0, 255 / 255f, 1) // Violet
+        };
+
+        int startBlock = (int)(camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth;
+        int endBlock = (int)(camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (int i = startBlock; i <= endBlock; i++) {
+            Color color = rainbowColors[Math.floorMod(i, rainbowColors.length)];
+            shapeRenderer.setColor(color);
+            float x = i * Constants.oneBlockWidth;
+            shapeRenderer.rect(x, 0, Constants.oneBlockWidth, Constants.oneBlockHeight);
+        }
+
+        shapeRenderer.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        int triangleSpacing = 3 * Constants.oneBlockWidth;
+
+        float triangleWidth = Constants.oneBlockWidth;
+
+        float triangleHeight = player.getHeight();
+
+        int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
+        int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
+
+        for (int i = spikeStartBlock; i <= spikeEndBlock; i ++) {
+            if (i % 2 == 0) {// every 4 blocks
+                float x = i * Constants.oneBlockWidth;
+                float baseLeft = x;
+                float baseRight = x + Constants.oneBlockWidth;
+                float tipX = x + Constants.oneBlockWidth / 2f;
+                float tipY = baseY + player.getHeight(); // Same height as player
+
+                shapeRenderer.setColor(Color.RED);
+                shapeRenderer.triangle(baseLeft, baseY, baseRight, baseY, tipX, tipY);
+            }
+        }
 
         shapeRenderer.end();
 
         batch.begin();
-
+        player.getSprite().draw(batch);
         batch.end();
     }
 
-    public void update(){
+    public void update(float delta) {
         batch.setProjectionMatrix(camera.combined);
-
         cameraUpdate();
+        player.update(delta);
+        boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        player.handleJumpInput(spacePressed);
     }
 
     private void cameraUpdate(){
-        camera.position.set(new Vector3(0, 0, 0));
+        float playerX = player.getX();
+
+        // Only move the camera if player has moved past the threshold
+        float thresholdX = camera.viewportWidth / 3f;
+
+        if (playerX > thresholdX) {
+            camera.position.x = playerX - thresholdX + camera.viewportWidth / 2f;
+        } else {
+            camera.position.x = camera.viewportWidth / 2f;
+        }
+
         camera.update();
     }
 

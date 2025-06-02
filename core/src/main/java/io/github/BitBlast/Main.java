@@ -1,5 +1,6 @@
 package io.github.BitBlast;
 
+import Helper.Constants;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 public class Main extends Game {
 
     public static Main INSTANCE;
-    private int widthScreen, heightScreen;
+    public int widthScreen, heightScreen;
     private OrthographicCamera camera;
 
     public Main() {
@@ -21,6 +22,7 @@ public class Main extends Game {
         this.heightScreen = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, this.widthScreen, this.heightScreen);
+        Constants.init();
         setScreen(new FirstScreen(camera));
     }
 }
