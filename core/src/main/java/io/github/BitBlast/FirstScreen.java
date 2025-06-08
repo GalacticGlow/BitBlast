@@ -1,20 +1,24 @@
 package io.github.BitBlast;
 
+import Helper.Block;
 import Helper.Constants;
 import Helper.Player;
+import Helper.Spike;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
 
-/** First screen of the application. Displayed after the application is created. */
+import java.util.ArrayList;
+
 public class FirstScreen implements Screen {
 
     private OrthographicCamera camera;
@@ -32,6 +36,16 @@ public class FirstScreen implements Screen {
 
     public float baseY;
 
+    ArrayList<Spike> spikeList = new ArrayList<>();
+
+    private boolean redFlashActive = false;
+    private float redFlashTimer = 0.7f;
+    private BitmapFont font;
+
+    public ArrayList<Block> blockList = new ArrayList<>();
+
+    private boolean jumpPressedLastFrame = false;
+
     public FirstScreen(OrthographicCamera camera) {
         this.camera = camera;
         this.batch = new SpriteBatch();
@@ -42,6 +56,9 @@ public class FirstScreen implements Screen {
     public void show() {
         this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
         baseY = Constants.startY;
+        font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
+        font.setColor(Color.WHITE);
+        font.getData().setScale(3);
     }
 
     @Override
@@ -51,8 +68,13 @@ public class FirstScreen implements Screen {
             blueBlock, indigoBlock, violetBlock
         };
 
+        //handleInput();
+
         update(delta);
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        checkForSpikeCollisions();
+        //player.checkGroundCollision(blockList);
+
+        Gdx.gl.glClearColor(255, 255, 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -90,41 +112,108 @@ public class FirstScreen implements Screen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        int triangleSpacing = 3 * Constants.oneBlockWidth;
-
-        float triangleWidth = Constants.oneBlockWidth;
-
-        float triangleHeight = player.getHeight();
-
         int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
         int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
 
-        for (int i = spikeStartBlock; i <= spikeEndBlock; i ++) {
-            if (i % 2 == 0) {// every 4 blocks
+        for (int i = spikeStartBlock; i <= spikeEndBlock; i++) {
+            if ((i + 11) % 10 == 0) {
                 float x = i * Constants.oneBlockWidth;
-                float baseLeft = x;
-                float baseRight = x + Constants.oneBlockWidth;
-                float tipX = x + Constants.oneBlockWidth / 2f;
-                float tipY = baseY + player.getHeight(); // Same height as player
+                float y = baseY;
 
-                shapeRenderer.setColor(Color.RED);
-                shapeRenderer.triangle(baseLeft, baseY, baseRight, baseY, tipX, tipY);
+                // You can adjust spike dimensions here
+                float spikeWidth = Constants.oneBlockWidth;
+                float spikeHeight = player.getHeight();
+
+                // Check if this spike already exists at this position
+                boolean exists = false;
+                for (Spike s : spikeList) {
+                    if (s.getX() == x && s.getY() == y) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    Spike spike = new Spike(Constants.spike1SkinPath, x, y, spikeWidth, spikeHeight);
+                    spikeList.add(spike);
+                }
             }
         }
 
         shapeRenderer.end();
 
+        for (int i = spikeStartBlock; i < spikeEndBlock; i++) {
+            if ((i + 8) % 10 == 0 || (i + 9) % 10 == 0) {
+                float x = i * Constants.oneBlockWidth;
+                blockList.add(new Block(Constants.blockSkinPath, x, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            }
+        }
+
         batch.begin();
         player.getSprite().draw(batch);
+        for (Spike spike : spikeList) {
+            spike.draw(batch);
+        }
+        for (Block block : blockList) {
+            block.draw(batch);
+        }
         batch.end();
+
+        if (redFlashActive) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(1, 0, 0, 1); // Red with full opacity
+            shapeRenderer.rect(0, 0, camera.viewportWidth, camera.viewportHeight);
+            shapeRenderer.end();
+
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            font.setColor(Color.WHITE);
+            GlyphLayout layout = new GlyphLayout(font, "YOU ARE GAY!");
+            font.draw(batch, layout,
+                (Gdx.graphics.getWidth() - layout.width) / 2,
+                (Gdx.graphics.getHeight() + layout.height) / 2
+            );
+            batch.end();
+
+            redFlashTimer -= delta;
+            if (redFlashTimer <= 0) {
+                redFlashActive = false;
+            }
+        }
     }
 
     public void update(float delta) {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
-        player.update(delta);
-        boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-        player.handleJumpInput(spacePressed);
+        if (!redFlashActive) {
+            player.update(delta);
+            boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+            player.handleJumpInput(spacePressed);
+        }
+    }
+
+    public void checkForSpikeCollisions() {
+        for (Spike spike : spikeList) {
+            if (player.getHitBox().overlaps(spike.getHitBox())) {
+                die();
+            }
+        }
+    }
+
+    private void handleInput() {
+        boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+
+        if (jumpPressed && !jumpPressedLastFrame && player.isOnGround()) {
+            player.jump();
+        }
+
+        jumpPressedLastFrame = jumpPressed; // Update for next frame
+    }
+
+    public void die(){
+        redFlashActive = true;
+        redFlashTimer = 0.7f;
+        player.updatePosition(Constants.startX, Constants.startY);
     }
 
     private void cameraUpdate(){

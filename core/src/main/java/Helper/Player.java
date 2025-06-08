@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 
 public class Player{
     private Sprite sprite;
@@ -36,6 +37,9 @@ public class Player{
 
     private float jumpTargetX;
 
+    private float yVelocity = 0;
+    private float xVelocity = 1f; // for future use if moving left/right
+
     public Player(String skinPath, int x, int y) {
         this.playerWidth = Constants.oneBlockWidth;
         this.playerHeight = Constants.oneBlockHeight;
@@ -51,106 +55,48 @@ public class Player{
         return hitBox;
     }
 
-    /*
-    public void update(float delta) {
-        float dx = delta * Constants.xSpeed * Constants.oneBlockWidth;
+    public void update(float delta, Level level) {
+        float newX = hitBox.x;
+        float newY = hitBox.y;
 
-        // Always move forward
-        float newX = sprite.getX() + dx;
-        float newY = sprite.getY();
-
-        if (isJumping) {
-            jumpTime += delta;
-
-            if (jumpTime > jumpDuration) {
-                // End jump
-                isJumping = false;
-                onGround = true;
-                jumpPressedLastFrame = false;
-
-                // Land at the final jump X position
-                newX = jumpTargetX;
-                newY = jumpStartY;
-
-                jumpTargetX = 0;
-                jumpStartX = 0;
-            }
-            else {
-                float theta = (float)(Math.PI * jumpTime / jumpDuration);
-                newX = jumpStartX + (jumpTargetX - jumpStartX) * (theta / (float)Math.PI);
-                newY = jumpStartY + Constants.maxJumpHeight * (float)Math.sin(theta);
-            }
-        }
-        else {
-            // Use same horizontal speed as jump
-            float jumpDistance = jumpTargetX - jumpStartX;
-            float jumpSpeedX = jumpDistance / jumpDuration;
-            newX += jumpSpeedX * delta;
+        // Apply gravity if in air
+        if (!onGround) {
+            yVelocity += Constants.acceleration * delta;
         }
 
-        System.out.println("Current X speed is: " + (newX - sprite.getX()));
+        // Apply vertical movement
+        newY += yVelocity * delta;
 
-        updatePosition(newX, newY);
-    }
-     */
-    /*
-    public void update(float delta) {
-        float dx = Constants.xSpeed * Constants.oneBlockWidth * delta;
-        float newX = sprite.getX() + dx;
-        float newY = sprite.getY();
-
-        if (isJumping) {
-            jumpTime += delta;
-
-            if (jumpTime > jumpDuration) {
-                isJumping = false;
+        // Check vertical collision
+        if (yVelocity > 0) { // Falling
+            if (level.doesRectCollideWithBlock(newX, newY + hitBox.height, hitBox.width, 0)) {
+                // Hit ground
+                yVelocity = 0;
                 onGround = true;
-                jumpPressedLastFrame = false;
-                jumpTime = 0;
-                newY = jumpStartY;
+                newY = (float) Math.floor((newY + hitBox.height) / Level.TILE_SIZE) * Level.TILE_SIZE - hitBox.height;
             } else {
-                float t = jumpTime / jumpDuration;
-                float arc = 4 * Constants.maxJumpHeight * t * (1 - t);
-                newY = jumpStartY + arc;
+                onGround = false;
+            }
+        } else if (yVelocity < 0) { // Going up
+            if (level.doesRectCollideWithBlock(newX, newY, hitBox.width, 0)) {
+                // Hit ceiling
+                yVelocity = 0;
+                newY = (float) Math.floor((newY) / Level.TILE_SIZE + 1) * Level.TILE_SIZE;
             }
         }
 
-        updatePosition(newX, newY);
-    }
-        */
+        // Apply horizontal movement if needed
+        newX += xVelocity * delta;
 
-    public void update(float delta) {
-        float dx = delta * Constants.xSpeed * Constants.oneBlockWidth;
-        float newX = sprite.getX() + dx;
-        float newY = sprite.getY();
-
-        if (isJumping) {
-            jumpTime += delta;
-
-            float t = jumpTime / jumpDuration;
-
-            if (t >= 1f) {
-                // End jump
-                isJumping = false;
-                onGround = true;
-                jumpPressedLastFrame = false;
-
-                newX = jumpTargetX;
-                newY = jumpStartY;
-
-                jumpTargetX = 0;
-                jumpStartX = 0;
-            } else {
-                // e.g. 3 * oneBlockWidth
-                float maxJumpHeight = jumpWidth / 1.5f; // Width:Height = 1.5:1
-
-                newX = jumpStartX + t * jumpWidth;
-                newY = jumpStartY + -4 * maxJumpHeight * (t - 0.5f) * (t - 0.5f) + maxJumpHeight;
-            }
+        // Check horizontal collision (walls)
+        if (level.doesRectCollideWithBlock(newX, newY, hitBox.width, hitBox.height)) {
+            newX = hitBox.x; // Cancel horizontal movement
         }
 
-        updatePosition(newX, newY);
+        // Final update of hitbox
+        hitBox.setPosition(newX, newY);
     }
+
 
     public void updatePosition(float x, float y) {
         hitBox.setPosition(x, y);
@@ -182,7 +128,6 @@ public class Player{
     }
 
     public void handleJumpInput(boolean jumpPressed) {
-        System.out.println("jumpPressed=" + jumpPressed + "      jumpPressedLastFrame=" + jumpPressedLastFrame + "    onGround=" + onGround);
         if (jumpPressed && !jumpPressedLastFrame && onGround) {
             jump();
         }
@@ -198,6 +143,25 @@ public class Player{
             jumpTargetX = jumpStartX + jumpWidth; // ensure forward motion
             onGround = false;
             System.out.println("Jump from x=" + jumpStartX + " to x=" + (jumpStartX + jumpWidth));
+        }
+    }
+
+    public void checkGroundCollision(ArrayList<Block> blocks) {
+        onGround = false;
+        for (Block block : blocks) {
+            if (this.hitBox.overlaps(block.getHitBox())) {
+                Rectangle blockRect = block.getHitBox();
+                System.out.println("Player landed on top of a block");
+
+                // Player is falling and lands on block
+                if (sprite.getY() > blockRect.y && curYSpeed <= 0) {
+                    updatePosition(hitBox.x, blockRect.y + blockRect.height);
+                    curYSpeed = 0;
+                    onGround = true;
+                    System.out.println("Player landed on top of a block and passed the if");
+                    break;
+                }
+            }
         }
     }
 }

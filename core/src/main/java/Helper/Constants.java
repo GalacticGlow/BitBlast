@@ -5,13 +5,26 @@ import com.badlogic.gdx.Gdx;
 public class Constants {
     public static String playerSkinPath = "Sprites/Icons/Cubes/Cube-1.png";
 
+    public static String spike1SkinPath = "Sprites/Spikes/Spike-1.png";
+    public static String spike2SkinPath = "Sprites/Spikes/Spike-2.png";
+    public static String spike3SkinPath = "Sprites/Spikes/Spikefloor-1.png";
+
+    public static String blockSkinPath = "Sprites/Blocks/Block-1.png";
+    public static String block1SkinPath = "Sprites/Blocks/Block-Segmented-1.png";
+    public static String block2SkinPath = "Sprites/Blocks/Block-Segmented-2.png";
+    public static String block3SkinPath = "Sprites/Blocks/Block-Segmented-3.png";
+    public static String block4SkinPath = "Sprites/Blocks/Block-Segmented-4.png";
+    public static String block5SkinPath = "Sprites/Blocks/Block-Segmented-5.png";
+    public static String block6SkinPath = "Sprites/Blocks/Block-Segmented-6.png";
+    public static String slabSkinPath = "Sprites/Blocks/Slab-1.png";
+
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 
     public static int oneBlockWidth;
     public static int oneBlockHeight;
 
-    public static final float acceleration = 0.876f;
+    public static final float acceleration = 2f;
     public static final float xSpeed = 5f;
     public static final float ySpeedJump = 1.94f;
     public static final float ySpeedMax = 2.6f;
