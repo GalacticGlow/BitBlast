@@ -68,8 +68,6 @@ public class FirstScreen implements Screen {
             blueBlock, indigoBlock, violetBlock
         };
 
-        //handleInput();
-
         update(delta);
         checkForSpikeCollisions();
         //player.checkGroundCollision(blockList);
@@ -115,6 +113,7 @@ public class FirstScreen implements Screen {
         int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
         int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
 
+        blockList.clear();
         for (int i = spikeStartBlock; i <= spikeEndBlock; i++) {
             if ((i + 11) % 10 == 0) {
                 float x = i * Constants.oneBlockWidth;
@@ -122,7 +121,7 @@ public class FirstScreen implements Screen {
 
                 // You can adjust spike dimensions here
                 float spikeWidth = Constants.oneBlockWidth;
-                float spikeHeight = player.getHeight();
+                float spikeHeight = Constants.oneBlockHeight;
 
                 // Check if this spike already exists at this position
                 boolean exists = false;
@@ -188,7 +187,7 @@ public class FirstScreen implements Screen {
         if (!redFlashActive) {
             player.update(delta);
             boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-            player.handleJumpInput(spacePressed);
+            //player.handleJumpInput(spacePressed);
         }
     }
 
@@ -200,20 +199,12 @@ public class FirstScreen implements Screen {
         }
     }
 
-    private void handleInput() {
-        boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-
-        if (jumpPressed && !jumpPressedLastFrame && player.isOnGround()) {
-            player.jump();
-        }
-
-        jumpPressedLastFrame = jumpPressed; // Update for next frame
-    }
-
     public void die(){
         redFlashActive = true;
         redFlashTimer = 0.7f;
         player.updatePosition(Constants.startX, Constants.startY);
+        player.onGround = true;
+        player.curYSpeed = 0;
     }
 
     private void cameraUpdate(){

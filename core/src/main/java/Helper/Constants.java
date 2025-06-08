@@ -24,7 +24,7 @@ public class Constants {
     public static int oneBlockWidth;
     public static int oneBlockHeight;
 
-    public static final float acceleration = 2f;
+    public static final float acceleration = 0.876f;
     public static final float xSpeed = 5f;
     public static final float ySpeedJump = 1.94f;
     public static final float ySpeedMax = 2.6f;
@@ -42,7 +42,7 @@ public class Constants {
 
     public static void init(){
         oneBlockWidth = Gdx.graphics.getWidth()/worldWidth;
-        oneBlockHeight = Gdx.graphics.getHeight()/worldHeight;
+        oneBlockHeight = oneBlockWidth;
 
         maxJumpHeight = 2.148f*oneBlockHeight;
         startY = (int)3.5*oneBlockHeight;
