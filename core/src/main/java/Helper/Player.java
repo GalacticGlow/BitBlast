@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.Input;
 
 import java.awt.*;
 import java.io.File;
@@ -39,9 +40,11 @@ public class Player{
 
     final float UNIT = 10.38f;
     final float GRAVITY = -0.876f * UNIT * UNIT;
-    final float INITIAL_JUMP_SPEED = 2.4f * UNIT;
+    final float INITIAL_JUMP_SPEED = 1.94f * UNIT;
     final float TERMINAL_VELOCITY = -2.6f * UNIT;
     final float BASE_X_SPEED = UNIT;
+
+    public boolean alive;
 
     public Player(String skinPath, int x, int y) {
         this.playerWidth = Constants.oneBlockWidth;
@@ -53,49 +56,64 @@ public class Player{
 
         this.hitBox = new Rectangle(x, y, playerWidth, playerHeight);
         this.onGround = true;
+        this.alive = true;
     }
 
     public Rectangle getHitBox() {
         return hitBox;
     }
 
-    public void update(float delta) {
-        System.out.println("Current X: " + sprite.getX());
-        System.out.println("Jump start curYSpeed: " + curYSpeed);
-
+    public void update(float delta, ArrayList<Block> blockList) {
+        // Move horizontally
         float dx = delta * BASE_X_SPEED * Constants.oneBlockWidth;
         float x = sprite.getX() + dx;
         float y = sprite.getY();
 
         // Handle jump input
-        boolean jumpPressed = Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.SPACE);
-
-        if (jumpPressed && this.onGround) {
+        boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        if (jumpPressed && onGround) {
             curYSpeed = INITIAL_JUMP_SPEED;
-            this.onGround = false;
+            onGround = false;
         }
 
-        jumpPressedLastFrame = jumpPressed;
-
-        // Apply gravity
+        // Gravity and vertical speed
         curYSpeed += GRAVITY * delta;
-
-        // Clamp to terminal velocity
-        if (curYSpeed < TERMINAL_VELOCITY) {
-            curYSpeed = TERMINAL_VELOCITY;
-        }
-
-        // Update vertical position
+        if (curYSpeed < TERMINAL_VELOCITY) curYSpeed = TERMINAL_VELOCITY;
         y += curYSpeed * delta * Constants.oneBlockHeight;
 
-        // Simulate ground collision (temporary — later you'll use block collision)
-        if (y <= Constants.startY) {
-            y = Constants.startY;
-            curYSpeed = 0;
-            this.onGround = true;
+        // Predict new hitbox
+        Rectangle nextHitBox = new Rectangle(x, y, playerWidth, playerHeight);
+        boolean landedOnBlock = false;
+
+        for (Block block : blockList) {
+            Rectangle blockHitBox = block.getHitBox();
+
+            if (nextHitBox.overlaps(blockHitBox)) {
+                float prevBottom = sprite.getY();
+                float blockTop = blockHitBox.y + blockHitBox.height;
+
+                // Only land on block if falling and coming from above
+                if (prevBottom >= blockTop && curYSpeed <= 0) {
+                    y = blockTop;
+                    curYSpeed = 0;
+                    onGround = true;
+                    landedOnBlock = true;
+                    break;
+                }
+                else {
+                    alive = false;
+                }
+            }
         }
 
-        System.out.println("Current Y (blocks): " + (y - Constants.startY)/Constants.oneBlockWidth);
+        // Fallback: hit ground
+        if (!landedOnBlock && y <= Constants.startY) {
+            y = Constants.startY;
+            curYSpeed = 0;
+            onGround = true;
+        } else if (!landedOnBlock) {
+            onGround = false;
+        }
 
         updatePosition(x, y);
     }
@@ -127,5 +145,9 @@ public class Player{
 
     public boolean isOnGround() {
         return this.onGround;
+    }
+
+    public boolean isAlive() {
+        return this.alive;
     }
 }

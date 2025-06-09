@@ -52,6 +52,24 @@ public class FirstScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
     }
 
+    public void generateLevel() {
+        for (int i = 20; i < 200; i += 15) { // wider gaps between groups
+            float x = i * Constants.oneBlockWidth;
+
+            // Spikes
+            spikeList.add(new Spike(Constants.spike1SkinPath, x - Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x - 2 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+
+            // Pillars
+            blockList.add(new Block(Constants.blockSkinPath, x, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            blockList.add(new Block(Constants.blockSkinPath, x + 3 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            blockList.add(new Block(Constants.blockSkinPath, x + 3 * Constants.oneBlockHeight, Constants.startY + Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + 2 * Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
+        }
+    }
+
     @Override
     public void show() {
         this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
@@ -59,6 +77,7 @@ public class FirstScreen implements Screen {
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
         font.setColor(Color.WHITE);
         font.getData().setScale(3);
+        generateLevel();
     }
 
     @Override
@@ -69,8 +88,10 @@ public class FirstScreen implements Screen {
         };
 
         update(delta);
-        checkForSpikeCollisions();
-        //player.checkGroundCollision(blockList);
+        checkForCollisions();
+        if (!player.isAlive()){
+            die();
+        }
 
         Gdx.gl.glClearColor(255, 255, 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -113,7 +134,8 @@ public class FirstScreen implements Screen {
         int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
         int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
 
-        blockList.clear();
+        /*
+        spikeList.clear();
         for (int i = spikeStartBlock; i <= spikeEndBlock; i++) {
             if ((i + 11) % 10 == 0) {
                 float x = i * Constants.oneBlockWidth;
@@ -138,15 +160,9 @@ public class FirstScreen implements Screen {
                 }
             }
         }
+         */
 
         shapeRenderer.end();
-
-        for (int i = spikeStartBlock; i < spikeEndBlock; i++) {
-            if ((i + 8) % 10 == 0 || (i + 9) % 10 == 0) {
-                float x = i * Constants.oneBlockWidth;
-                blockList.add(new Block(Constants.blockSkinPath, x, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            }
-        }
 
         batch.begin();
         player.getSprite().draw(batch);
@@ -159,6 +175,8 @@ public class FirstScreen implements Screen {
         batch.end();
 
         if (redFlashActive) {
+            redFlashTimer -= delta;
+
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(1, 0, 0, 1); // Red with full opacity
             shapeRenderer.rect(0, 0, camera.viewportWidth, camera.viewportHeight);
@@ -174,9 +192,9 @@ public class FirstScreen implements Screen {
             );
             batch.end();
 
-            redFlashTimer -= delta;
             if (redFlashTimer <= 0) {
                 redFlashActive = false;
+                player.alive = true;
             }
         }
     }
@@ -185,16 +203,15 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
         if (!redFlashActive) {
-            player.update(delta);
+            player.update(delta, blockList);
             boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-            //player.handleJumpInput(spacePressed);
         }
     }
 
-    public void checkForSpikeCollisions() {
+    public void checkForCollisions() {
         for (Spike spike : spikeList) {
             if (player.getHitBox().overlaps(spike.getHitBox())) {
-                die();
+                player.alive = false;
             }
         }
     }
@@ -205,6 +222,7 @@ public class FirstScreen implements Screen {
         player.updatePosition(Constants.startX, Constants.startY);
         player.onGround = true;
         player.curYSpeed = 0;
+        player.alive = true;
     }
 
     private void cameraUpdate(){
