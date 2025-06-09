@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 
@@ -34,6 +33,10 @@ public class FirstScreen implements Screen {
     private Texture blueBlock;
     private Texture indigoBlock;
     private Texture violetBlock;
+
+    private Texture backgroundTexture;
+    private Texture groundTexture;
+
 
     public float baseY;
 
@@ -80,7 +83,58 @@ public class FirstScreen implements Screen {
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
         font.setColor(Color.WHITE);
         font.getData().setScale(3);
+
+        backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
+        groundTexture = new Texture(Constants.groundPath);
         generateLevel();
+    }
+
+    private void drawRepeatingBackground() {
+        float bgWidth = 24 * Constants.oneBlockWidth;
+        float bgHeight = 24 * Constants.oneBlockWidth;
+
+        float cameraLeft = camera.position.x - camera.viewportWidth / 2;
+        float cameraRight = camera.position.x + camera.viewportWidth / 2;
+        float cameraTop = camera.position.y + camera.viewportHeight / 2;
+        float cameraBottom = camera.position.y - camera.viewportHeight / 2;
+
+        int startTileX = (int) Math.floor(cameraLeft / bgWidth);
+        int endTileX = (int) Math.ceil(cameraRight / bgWidth);
+        int startTileY = (int) Math.floor(cameraBottom / bgHeight);
+        int endTileY = (int) Math.ceil(cameraTop / bgHeight);
+
+
+        batch.setColor(0f, 0f, 1.0f, 1.0f);
+        for (int x = startTileX; x <= endTileX; x++) {
+            for (int y = startTileY; y <= endTileY; y++) {
+                float drawX = x * bgWidth;
+                float drawY = y * bgHeight;
+                batch.draw(backgroundTexture, drawX, drawY, bgWidth, bgHeight);
+            }
+        }
+        batch.setColor(Color.WHITE);
+    }
+
+    private void drawRepeatingGround() {
+        float groundWidth = Constants.oneBlockWidth*3;
+
+        float cameraLeft = camera.position.x - camera.viewportWidth / 2;
+        float cameraRight = camera.position.x + camera.viewportWidth / 2;
+
+        float groundTop = Constants.startY;
+        float groundBottom = camera.position.y - camera.viewportHeight / 2;
+        float totalGroundHeight = groundTop - groundBottom;
+
+        int startTileX = (int) Math.floor(cameraLeft / groundWidth);
+        int endTileX = (int) Math.ceil(cameraRight / groundWidth);
+
+
+        batch.setColor(0f, 0f, 1.0f, 1.0f);
+        for (int x = startTileX; x <= endTileX; x++) {
+            float drawX = x*groundWidth;
+            batch.draw(groundTexture, drawX, groundBottom, groundWidth, totalGroundHeight);
+        }
+        batch.setColor(Color.WHITE);
     }
 
     @Override
@@ -172,7 +226,14 @@ public class FirstScreen implements Screen {
 
         shapeRenderer.end();
 
+
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+        drawRepeatingBackground();
+        drawRepeatingGround();
+
+
         player.getSprite().draw(batch);
         for (Spike spike : spikeList) {
             spike.draw(batch);
@@ -296,6 +357,7 @@ public class FirstScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Destroy screen's assets here.
+        if (backgroundTexture != null) backgroundTexture.dispose();
+        if (groundTexture != null) groundTexture.dispose();
     }
 }
