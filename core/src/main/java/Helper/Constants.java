@@ -18,6 +18,8 @@ public class Constants {
     public static String block6SkinPath = "Sprites/Blocks/Block-Segmented-6.png";
     public static String slabSkinPath = "Sprites/Blocks/Slab-1.png";
 
+    public static String jumpOrbPath = "Sprites/Interactables/Orb-1.png";
+
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 

@@ -11,16 +11,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 
 public class FirstScreen implements Screen {
 
+//    private Main game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
@@ -45,6 +46,8 @@ public class FirstScreen implements Screen {
     public ArrayList<Block> blockList = new ArrayList<>();
 
     private boolean jumpPressedLastFrame = false;
+
+    private boolean paused = false;
 
     public FirstScreen(OrthographicCamera camera) {
         this.camera = camera;
@@ -91,6 +94,11 @@ public class FirstScreen implements Screen {
         checkForCollisions();
         if (!player.isAlive()){
             die();
+        }
+
+        if(paused) {
+            drawPauseScreen();
+            return;
         }
 
         Gdx.gl.glClearColor(255, 255, 255, 1);
@@ -199,14 +207,32 @@ public class FirstScreen implements Screen {
         }
     }
 
+    private void drawPauseScreen() {
+        batch.begin();
+        font.setColor(Color.BLACK);
+        GlyphLayout layout = new GlyphLayout(font, "PAUSE");
+        font.draw(batch, layout,
+            (Gdx.graphics.getWidth() - layout.width) / 2,
+            (Gdx.graphics.getHeight() + layout.height) / 2
+        );
+        batch.end();
+    }
+
     public void update(float delta) {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
-        if (!redFlashActive) {
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
+            paused = true;
+        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && paused) {
+            paused = false;
+        }
+
+        if (!redFlashActive && !paused) {
             player.update(delta, blockList);
-            boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
         }
     }
+
 
     public void checkForCollisions() {
         for (Spike spike : spikeList) {
@@ -226,6 +252,10 @@ public class FirstScreen implements Screen {
     }
 
     private void cameraUpdate(){
+        if(paused) {
+            return;
+        }
+
         float playerX = player.getX();
 
         // Only move the camera if player has moved past the threshold

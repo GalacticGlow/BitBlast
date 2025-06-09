@@ -71,7 +71,8 @@ public class Player{
 
         // Handle jump input
         boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-        if (jumpPressed && onGround) {
+        boolean mouseJumpPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
+        if (jumpPressed && onGround || mouseJumpPressed && onGround) {
             curYSpeed = INITIAL_JUMP_SPEED;
             onGround = false;
         }
