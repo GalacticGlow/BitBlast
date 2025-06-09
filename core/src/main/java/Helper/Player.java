@@ -70,7 +70,7 @@ public class Player{
         float y = sprite.getY();
 
         // Handle jump input
-        boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isTouched();
         boolean mouseJumpPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
         if (jumpPressed && onGround || mouseJumpPressed && onGround) {
             curYSpeed = INITIAL_JUMP_SPEED;
