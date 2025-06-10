@@ -254,7 +254,7 @@ public class FirstScreen implements Screen {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             font.setColor(Color.WHITE);
-            GlyphLayout layout = new GlyphLayout(font, "YOU ARE GAY!");
+            GlyphLayout layout = new GlyphLayout(font, "YOU ARE DEAD!");
             font.draw(batch, layout,
                 (Gdx.graphics.getWidth() - layout.width) / 2,
                 (Gdx.graphics.getHeight() + layout.height) / 2

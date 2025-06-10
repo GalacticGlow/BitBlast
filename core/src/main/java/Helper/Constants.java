@@ -46,8 +46,8 @@ public class Constants {
     public static float jumpHorizontalSpeed;
 
     public static void init(){
-        oneBlockWidth = Gdx.graphics.getWidth()/worldWidth;
-        oneBlockHeight = oneBlockWidth;
+        oneBlockHeight = Gdx.graphics.getWidth()/worldWidth;
+        oneBlockWidth = oneBlockHeight;
 
         maxJumpHeight = 2.148f*oneBlockHeight;
         startY = (int)3.5*oneBlockHeight;
