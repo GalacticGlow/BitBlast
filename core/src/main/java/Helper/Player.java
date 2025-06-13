@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input;
 
-import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
 public class Player{
@@ -20,31 +18,18 @@ public class Player{
 
     public float curYSpeed;
 
-    public float jumpStartY;
-
-    public boolean applyGravity = false;
-    private boolean isJumping = false;
-    private boolean jumped = false;
-
     public boolean onGround;
-
-    //private boolean isJumping = false;
-    private float jumpTime = 0f;
-    private final float jumpDuration = 0.7f; // seconds
-    private float jumpStartX;
-    private final float jumpWidth = 4.1f * Constants.oneBlockWidth;
-
-    private boolean jumpPressedLastFrame = false;
-
-    private float jumpTargetX;
 
     final float UNIT = 10.38f;
     final float GRAVITY = -0.876f * UNIT * UNIT;
     final float INITIAL_JUMP_SPEED = 1.94f * UNIT;
     final float TERMINAL_VELOCITY = -2.6f * UNIT;
     final float BASE_X_SPEED = UNIT;
+    final float JUMP_PAD_ACCELERATION = 2.77f * UNIT;
+    final float JUMP_ORB_SPEED = 1.91F * UNIT;
 
     public boolean alive;
+    public boolean orbTrigger;
 
     public Player(String skinPath, int x, int y) {
         this.playerWidth = Constants.oneBlockWidth;
@@ -63,7 +48,7 @@ public class Player{
         return hitBox;
     }
 
-    public void update(float delta, ArrayList<Block> blockList) {
+    public void update(float delta, ArrayList<Block> blockList, ArrayList<JumpPad> jumpPadList, ArrayList<Orb> orbList) {
         // Move horizontally
         float dx = delta * BASE_X_SPEED * Constants.oneBlockWidth;
         float x = sprite.getX() + dx;
@@ -72,9 +57,26 @@ public class Player{
         // Handle jump input
         boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isTouched();
         boolean mouseJumpPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
-        if (jumpPressed && onGround || mouseJumpPressed && onGround) {
-            curYSpeed = INITIAL_JUMP_SPEED;
-            onGround = false;
+        if (jumpPressed || mouseJumpPressed) {
+            if (onGround) {
+                curYSpeed = INITIAL_JUMP_SPEED;
+                onGround = false;
+            }
+            orbTrigger = true;
+        }
+        for (JumpPad jumpPad : jumpPadList) {
+            if (this.hitBox.overlaps(jumpPad.getHitBox())) {
+                curYSpeed = JUMP_PAD_ACCELERATION;
+                onGround = false;
+                break;
+            }
+        }
+
+        for (Orb orb : orbList) {
+            if (this.hitBox.overlaps(orb.getHitBox()) && orbTrigger) {
+                curYSpeed = JUMP_ORB_SPEED;
+                break;
+            }
         }
 
         // Gravity and vertical speed
@@ -117,6 +119,7 @@ public class Player{
         }
 
         updatePosition(x, y);
+        orbTrigger = false;
     }
 
     public void updatePosition(float x, float y) {

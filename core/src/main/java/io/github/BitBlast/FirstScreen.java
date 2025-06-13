@@ -1,9 +1,6 @@
 package io.github.BitBlast;
 
-import Helper.Block;
-import Helper.Constants;
-import Helper.Player;
-import Helper.Spike;
+import Helper.*;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -47,6 +44,8 @@ public class FirstScreen implements Screen {
     private BitmapFont font;
 
     public ArrayList<Block> blockList = new ArrayList<>();
+    public ArrayList<JumpPad> jumpPadList = new ArrayList<>();
+    public ArrayList<Orb> orbList = new ArrayList<>();
 
     private boolean jumpPressedLastFrame = false;
 
@@ -59,7 +58,7 @@ public class FirstScreen implements Screen {
     }
 
     public void generateLevel() {
-        for (int i = 20; i < 200; i += 15) { // wider gaps between groups
+        for (int i = 20; i < 400; i += 30) {
             float x = i * Constants.oneBlockWidth;
 
             // Spikes
@@ -73,6 +72,24 @@ public class FirstScreen implements Screen {
             blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
             blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
             blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + 2 * Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
+
+            jumpPadList.add(new JumpPad(x + 11 * Constants.oneBlockWidth, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 12 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 13 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 14 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 15 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 16 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 17 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 18 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 19 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 20 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 21 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 22 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+            spikeList.add(new Spike(Constants.spike1SkinPath, x + 23 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+
+            orbList.add(new Orb(x + 16 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
+            orbList.add(new Orb(x + 20 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
         }
     }
 
@@ -150,7 +167,7 @@ public class FirstScreen implements Screen {
             die();
         }
 
-        if(paused) {
+        if (paused) {
             drawPauseScreen();
             return;
         }
@@ -159,13 +176,6 @@ public class FirstScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(camera.combined);
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-
-        shapeRenderer.rect(this.player.getX(), this.player.getY(), this.player.getWidth(), this.player.getHeight());
-
-        shapeRenderer.end();
 
         Color[] rainbowColors = {
             Color.RED,
@@ -196,34 +206,6 @@ public class FirstScreen implements Screen {
         int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
         int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
 
-        /*
-        spikeList.clear();
-        for (int i = spikeStartBlock; i <= spikeEndBlock; i++) {
-            if ((i + 11) % 10 == 0) {
-                float x = i * Constants.oneBlockWidth;
-                float y = baseY;
-
-                // You can adjust spike dimensions here
-                float spikeWidth = Constants.oneBlockWidth;
-                float spikeHeight = Constants.oneBlockHeight;
-
-                // Check if this spike already exists at this position
-                boolean exists = false;
-                for (Spike s : spikeList) {
-                    if (s.getX() == x && s.getY() == y) {
-                        exists = true;
-                        break;
-                    }
-                }
-
-                if (!exists) {
-                    Spike spike = new Spike(Constants.spike1SkinPath, x, y, spikeWidth, spikeHeight);
-                    spikeList.add(spike);
-                }
-            }
-        }
-         */
-
         shapeRenderer.end();
 
 
@@ -240,6 +222,12 @@ public class FirstScreen implements Screen {
         }
         for (Block block : blockList) {
             block.draw(batch);
+        }
+        for (JumpPad jumpPad : jumpPadList) {
+            jumpPad.draw(batch);
+        }
+        for (Orb orb : orbList) {
+            orb.draw(batch);
         }
         batch.end();
 
@@ -290,7 +278,7 @@ public class FirstScreen implements Screen {
         }
 
         if (!redFlashActive && !paused) {
-            player.update(delta, blockList);
+            player.update(delta, blockList, jumpPadList, orbList);
         }
     }
 

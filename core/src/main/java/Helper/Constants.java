@@ -23,6 +23,10 @@ public class Constants {
     public static String backdropPath = "Sprites/Background/Backdrop-1.png";
     public static String groundPath = "Sprites/Background/GroundBlock-1.png";
 
+    public static String jumpPadPath = "Sprites/Interactables/Pad-1.png";
+
+
+
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 
