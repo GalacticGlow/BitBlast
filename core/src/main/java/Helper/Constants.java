@@ -27,14 +27,6 @@ public class Constants {
 
 
 
-    public static String logoPath = "Sprites/Menu Objects/Logo.png";
-    public static String playButtonPath = "Sprites/Menu Objects/Play-Button.png";
-    public static String greyedPlayButtonPath = "Sprites/Menu Objects/Play-Button-Greyed.png";
-    public static String cubeButtonPath = "Sprites/Menu Objects/Cube-Button.png";
-    public static String greyedCubeButtonPath = "Sprites/Menu Objects/Cube-Button-Greyed.png";
-    public static String CogButtonPath = "Sprites/Menu Objects/Cog-Button.png";
-    public static String greyedCogButtonPath = "Sprites/Menu Objects/Cog-Button-Greyed.png";
-
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 
@@ -46,7 +38,7 @@ public class Constants {
     public static final float ySpeedJump = 1.94f;
     public static final float ySpeedMax = 2.6f;
 
-    public static final int startX = -200;
+    public static final int startX = 0;
 
     public static float maxJumpHeight;
     public static int startY;

@@ -30,7 +30,8 @@ public class Main extends Game {
         this.camera.setToOrtho(false, this.widthScreen, this.heightScreen);
         Constants.init();
 
-        ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().setScreen(ScreenType.START);
+
+
+        setScreen(new StartScreen(this, camera));
     }
 }

@@ -20,8 +20,7 @@ import java.util.ArrayList;
 
 public class FirstScreen implements Screen {
 
-    //    private Main game;
-    private final Main game;
+//    private Main game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
@@ -53,8 +52,7 @@ public class FirstScreen implements Screen {
 
     private boolean paused = false;
 
-    public FirstScreen(Main game, OrthographicCamera camera) {
-        this.game = game;
+    public FirstScreen(OrthographicCamera camera) {
         this.camera = camera;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
@@ -130,11 +128,7 @@ public class FirstScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(null);
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        if (player == null) {
-            this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
-        }
+        this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
         baseY = Constants.startY;
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
         font.setColor(Color.WHITE);
@@ -142,7 +136,7 @@ public class FirstScreen implements Screen {
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
-        generateLevel("Sprites/UltimateDestruction.json");
+        generateLevel("assets/Sprites/UltimateDestruction.json");
     }
 
     private void drawRepeatingBackground() {
@@ -195,8 +189,6 @@ public class FirstScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        System.out.println("Game is starting!");
-        if (player == null || backgroundTexture == null || groundTexture == null) return;
         Texture[] rainbowBlocks = {
             redBlock, orangeBlock, yellowBlock, greenBlock,
             blueBlock, indigoBlock, violetBlock
@@ -208,23 +200,12 @@ public class FirstScreen implements Screen {
             die();
         }
 
-//        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-//            game.setScreen(new StartScreen(game, camera));
-//        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
-            paused = true;
-        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && paused) {
-            paused = false;
-        }
-
         if (paused) {
             drawPauseScreen();
             return;
         }
 
-
-        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+        Gdx.gl.glClearColor(255, 255, 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -324,7 +305,11 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
 
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
+            paused = true;
+        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && paused) {
+            paused = false;
+        }
 
         if (!redFlashActive && !paused) {
             player.update(delta, blockList, jumpPadList, orbList);
