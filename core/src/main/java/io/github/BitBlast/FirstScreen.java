@@ -3,6 +3,7 @@ package io.github.BitBlast;
 import Helper.*;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.ArrayList;
 
@@ -47,8 +50,6 @@ public class FirstScreen implements Screen {
     public ArrayList<JumpPad> jumpPadList = new ArrayList<>();
     public ArrayList<Orb> orbList = new ArrayList<>();
 
-    private boolean jumpPressedLastFrame = false;
-
     private boolean paused = false;
 
     public FirstScreen(OrthographicCamera camera) {
@@ -57,7 +58,8 @@ public class FirstScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void generateLevel() {
+    public void generateLevel(String fileName) {
+        /*
         spikeList.add(new Spike(Constants.spike1SkinPath, 7*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
         spikeList.add(new Spike(Constants.spike1SkinPath,  8*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
         spikeList.add(new Spike(Constants.spike1SkinPath,  9*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
@@ -95,6 +97,33 @@ public class FirstScreen implements Screen {
             orbList.add(new Orb(x + 16 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
             orbList.add(new Orb(x + 20 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
         }
+        */
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
+
+        JsonValue layout = base.get("layout");
+        System.out.println("layout = " + layout);
+
+        for (JsonValue item = layout.child; item != null; item = item.next) {
+            String type = item.getString("type");
+            float x = item.getFloat("x")*Constants.oneBlockHeight;
+            float y = item.getFloat("y")*Constants.oneBlockHeight + Constants.startY;
+
+            switch (type){
+                case "spike":
+                    spikeList.add(new Spike(Constants.spike1SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "block":
+                    blockList.add(new Block(Constants.blockSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "jumppad":
+                    jumpPadList.add(new JumpPad(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "orb":
+                    orbList.add(new Orb(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+            }
+        }
     }
 
     @Override
@@ -107,7 +136,7 @@ public class FirstScreen implements Screen {
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
-        generateLevel();
+        generateLevel("assets/Sprites/UltimateDestruction.json");
     }
 
     private void drawRepeatingBackground() {
@@ -303,6 +332,7 @@ public class FirstScreen implements Screen {
         player.onGround = true;
         player.curYSpeed = 0;
         player.alive = true;
+        player.getSprite().setRotation(0);
     }
 
     private void cameraUpdate(){

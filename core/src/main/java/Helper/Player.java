@@ -30,6 +30,9 @@ public class Player{
 
     public boolean alive;
     public boolean orbTrigger;
+    public float jumpTimer = 0f;
+    public float jumpTime = -2*INITIAL_JUMP_SPEED/GRAVITY;
+    public float rotation;
 
     public Player(String skinPath, int x, int y) {
         this.playerWidth = Constants.oneBlockWidth;
@@ -38,32 +41,51 @@ public class Player{
         sprite = new Sprite(texture);
         sprite.setSize(Constants.oneBlockWidth, Constants.oneBlockHeight);
         sprite.setPosition(x, y);
+        sprite.setOriginCenter();
 
         this.hitBox = new Rectangle(x, y, playerWidth, playerHeight);
         this.onGround = true;
         this.alive = true;
+        this.rotation = 360f;
     }
 
     public Rectangle getHitBox() {
         return hitBox;
     }
 
+    private float normalizeRotation(float rotation) {
+        return ((rotation % 360f) + 360f) % 360f;
+    }
+
     public void update(float delta, ArrayList<Block> blockList, ArrayList<JumpPad> jumpPadList, ArrayList<Orb> orbList) {
-        // Move horizontally
         float dx = delta * BASE_X_SPEED * Constants.oneBlockWidth;
         float x = sprite.getX() + dx;
         float y = sprite.getY();
 
-        // Handle jump input
         boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isTouched();
         boolean mouseJumpPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
         if (jumpPressed || mouseJumpPressed) {
             if (onGround) {
                 curYSpeed = INITIAL_JUMP_SPEED;
                 onGround = false;
+                jumpTimer = 0f;
             }
             orbTrigger = true;
         }
+
+        if (!onGround) {
+            jumpTimer += delta;
+            float progress = Math.min(jumpTimer / jumpTime, 1f);
+            sprite.setRotation(this.rotation - progress * 180f);
+        } else {
+            if (jumpTimer > 0) {
+                this.rotation -= 180f;
+                this.rotation = normalizeRotation(this.rotation);
+                jumpTimer = 0;
+            }
+            sprite.setRotation(this.rotation);
+        }
+
         for (JumpPad jumpPad : jumpPadList) {
             if (this.hitBox.overlaps(jumpPad.getHitBox())) {
                 curYSpeed = JUMP_PAD_ACCELERATION;
