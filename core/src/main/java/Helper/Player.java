@@ -25,7 +25,7 @@ public class Player{
     final float INITIAL_JUMP_SPEED = 1.94f * UNIT;
     final float TERMINAL_VELOCITY = -2.6f * UNIT;
     final float BASE_X_SPEED = UNIT;
-    final float JUMP_PAD_ACCELERATION = 2.77f * UNIT;
+    final float JUMP_PAD_ACCELERATION = 2.5f * UNIT;
     final float JUMP_ORB_SPEED = 1.91F * UNIT;
 
     public boolean alive;
