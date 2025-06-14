@@ -3,7 +3,7 @@ package Helper;
 import com.badlogic.gdx.Gdx;
 
 public class Constants {
-    public static String playerSkinPath = "Sprites/Icons/Cubes/Cube-1.png";
+    public static String playerSkinPath = "Sprites/Icons/Cubes/Cube-5.png";
 
     public static String spike1SkinPath = "Sprites/Spikes/Spike-1.png";
     public static String spike2SkinPath = "Sprites/Spikes/Spike-2.png";

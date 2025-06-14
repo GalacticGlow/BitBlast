@@ -15,6 +15,11 @@ public class Spike {
     public float spikeX;
     public float spikeY;
 
+    final float hitBoxXOffsetCoefficient = 0.425f;
+    final float hitBoxYOffsetCoefficient = 0.307f;
+    final float hitBoxWidthCoefficient = 0.15f;
+    final float hitBoxHeightCoefficient = 0.423f;
+
     public Spike(String skinPath, float x, float y, float spikeWidth, float spikeHeight) {
         this.spikeWidth = spikeWidth;
         this.spikeHeight = spikeHeight;
@@ -24,7 +29,7 @@ public class Spike {
         sprite = new Sprite(texture);
         sprite.setSize(spikeWidth, spikeHeight);
         sprite.setPosition(x, y);
-        this.hitBox = new Rectangle(x, y, spikeWidth, spikeHeight);
+        this.hitBox = new Rectangle(x + Constants.oneBlockHeight*hitBoxXOffsetCoefficient, y + Constants.oneBlockHeight*hitBoxYOffsetCoefficient, Constants.oneBlockWidth*hitBoxWidthCoefficient, Constants.oneBlockHeight*hitBoxHeightCoefficient);
     }
 
     public void draw(SpriteBatch batch) {
@@ -33,6 +38,10 @@ public class Spike {
 
     public Rectangle getHitBox() {
         return hitBox;
+    }
+
+    public Float[] hitBoxData(){
+        return new Float[]{hitBox.x,hitBox.y, hitBox.width, hitBox.height};
     }
 
     public float getX(){

@@ -58,6 +58,10 @@ public class FirstScreen implements Screen {
     }
 
     public void generateLevel() {
+        spikeList.add(new Spike(Constants.spike1SkinPath, 7*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+        spikeList.add(new Spike(Constants.spike1SkinPath,  8*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+        spikeList.add(new Spike(Constants.spike1SkinPath,  9*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
+
         for (int i = 20; i < 400; i += 30) {
             float x = i * Constants.oneBlockWidth;
 
@@ -203,18 +207,13 @@ public class FirstScreen implements Screen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        int spikeStartBlock = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth);
-        int spikeEndBlock = (int)Math.ceil((camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth);
-
         shapeRenderer.end();
-
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         drawRepeatingBackground();
         drawRepeatingGround();
-
 
         player.getSprite().draw(batch);
         for (Spike spike : spikeList) {
@@ -230,6 +229,12 @@ public class FirstScreen implements Screen {
             orb.draw(batch);
         }
         batch.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        for (Spike spike : spikeList) {
+            shapeRenderer.rect(spike.hitBoxData()[0], spike.hitBoxData()[1], spike.hitBoxData()[2], spike.hitBoxData()[3]);
+        }
+        shapeRenderer.end();
 
         if (redFlashActive) {
             redFlashTimer -= delta;
