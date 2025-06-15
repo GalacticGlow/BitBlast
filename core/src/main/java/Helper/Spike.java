@@ -30,6 +30,7 @@ public class Spike {
         sprite.setSize(spikeWidth, spikeHeight);
         sprite.setPosition(x, y);
         this.hitBox = new Rectangle(x + Constants.oneBlockHeight*hitBoxXOffsetCoefficient, y + Constants.oneBlockHeight*hitBoxYOffsetCoefficient, Constants.oneBlockWidth*hitBoxWidthCoefficient, Constants.oneBlockHeight*hitBoxHeightCoefficient);
+        sprite.setOriginCenter();
     }
 
     public void draw(SpriteBatch batch) {

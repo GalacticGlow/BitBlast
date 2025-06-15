@@ -25,8 +25,6 @@ public class Constants {
 
     public static String jumpPadPath = "Sprites/Interactables/Pad-1.png";
 
-
-
     public static String logoPath = "Sprites/Menu Objects/Logo.png";
     public static String playButtonPath = "Sprites/Menu Objects/Play-Button.png";
     public static String greyedPlayButtonPath = "Sprites/Menu Objects/Play-Button-Greyed.png";
@@ -34,6 +32,10 @@ public class Constants {
     public static String greyedCubeButtonPath = "Sprites/Menu Objects/Cube-Button-Greyed.png";
     public static String CogButtonPath = "Sprites/Menu Objects/Cog-Button.png";
     public static String greyedCogButtonPath = "Sprites/Menu Objects/Cog-Button-Greyed.png";
+
+    public static String chainDecoPath = "Sprites/Deco/Chain-1.png";
+    public static String spikeDecoPath = "Sprites/Deco/Spikedeco-1.png";
+    public static String torchDecoPath = "Sprites/Deco/Torch-1.png";
 
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
@@ -54,6 +56,7 @@ public class Constants {
     public static float jumpVelocity;
 
     public static float cameraFollowThresholdX;
+    public static float cameraFollowThresholdY;
 
     public static float jumpHorizontalSpeed;
 
@@ -67,6 +70,7 @@ public class Constants {
         jumpVelocity = (float)Math.sqrt(2 * -acceleration * maxHeight);
 
         cameraFollowThresholdX = Constants.oneBlockWidth * 4; // After 4 blocks
+        cameraFollowThresholdY = Constants.oneBlockHeight * 3;
 
         jumpHorizontalSpeed = Constants.xSpeed * Constants.oneBlockWidth; // or whatever speed you want
     }

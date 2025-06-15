@@ -41,15 +41,15 @@ public class FirstScreen implements Screen {
 
     public float baseY;
 
-    ArrayList<Spike> spikeList = new ArrayList<>();
-
     private boolean redFlashActive = false;
     private float redFlashTimer = 0.7f;
     private BitmapFont font;
 
+    public ArrayList<Spike> spikeList = new ArrayList<>();
     public ArrayList<Block> blockList = new ArrayList<>();
     public ArrayList<JumpPad> jumpPadList = new ArrayList<>();
     public ArrayList<Orb> orbList = new ArrayList<>();
+    public ArrayList<Decoration> decorationList = new ArrayList<>();
 
     private boolean paused = false;
 
@@ -61,50 +61,10 @@ public class FirstScreen implements Screen {
     }
 
     public void generateLevel(String fileName) {
-        /*
-        spikeList.add(new Spike(Constants.spike1SkinPath, 7*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-        spikeList.add(new Spike(Constants.spike1SkinPath,  8*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-        spikeList.add(new Spike(Constants.spike1SkinPath,  9*Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-
-        for (int i = 20; i < 400; i += 30) {
-            float x = i * Constants.oneBlockWidth;
-
-            // Spikes
-            spikeList.add(new Spike(Constants.spike1SkinPath, x - Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x - 2 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-
-            // Pillars
-            blockList.add(new Block(Constants.blockSkinPath, x, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            blockList.add(new Block(Constants.blockSkinPath, x + 3 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            blockList.add(new Block(Constants.blockSkinPath, x + 3 * Constants.oneBlockHeight, Constants.startY + Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            blockList.add(new Block(Constants.blockSkinPath, x + 7 * Constants.oneBlockHeight, Constants.startY + 2 * Constants.oneBlockHeight, Constants.oneBlockWidth, Constants.oneBlockHeight));
-
-            jumpPadList.add(new JumpPad(x + 11 * Constants.oneBlockWidth, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 12 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 13 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 14 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 15 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 16 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 17 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 18 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 19 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 20 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 21 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 22 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-            spikeList.add(new Spike(Constants.spike1SkinPath, x + 23 * Constants.oneBlockHeight, Constants.startY, Constants.oneBlockWidth, Constants.oneBlockHeight));
-
-            orbList.add(new Orb(x + 16 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
-            orbList.add(new Orb(x + 20 * Constants.oneBlockWidth, Constants.startY + 2 * Constants.oneBlockWidth, Constants.oneBlockHeight, Constants.oneBlockHeight));
-        }
-        */
         JsonReader jsonReader = new JsonReader();
         JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
 
         JsonValue layout = base.get("layout");
-        System.out.println("layout = " + layout);
 
         for (JsonValue item = layout.child; item != null; item = item.next) {
             String type = item.getString("type");
@@ -123,6 +83,15 @@ public class FirstScreen implements Screen {
                     break;
                 case "orb":
                     orbList.add(new Orb(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "chain":
+                    decorationList.add(new Decoration(Constants.chainDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
+                    break;
+                case "spikedeco":
+                    decorationList.add(new Decoration(Constants.spikeDecoPath, x, y, 2*Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "torch":
+                    decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 1.5f*Constants.oneBlockHeight));
                     break;
             }
         }
@@ -195,7 +164,6 @@ public class FirstScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        System.out.println("Game is starting!");
         if (player == null || backgroundTexture == null || groundTexture == null) return;
         Texture[] rainbowBlocks = {
             redBlock, orangeBlock, yellowBlock, greenBlock,
@@ -276,6 +244,9 @@ public class FirstScreen implements Screen {
         for (Orb orb : orbList) {
             orb.draw(batch);
         }
+        for (Decoration decoration : decorationList) {
+            decoration.draw(batch);
+        }
         batch.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -324,13 +295,10 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
 
-
-
         if (!redFlashActive && !paused) {
             player.update(delta, blockList, jumpPadList, orbList);
         }
     }
-
 
     public void checkForCollisions() {
         for (Spike spike : spikeList) {
@@ -356,6 +324,7 @@ public class FirstScreen implements Screen {
         }
 
         float playerX = player.getX();
+        float playerY = player.getY();
 
         // Only move the camera if player has moved past the threshold
         float thresholdX = camera.viewportWidth / 3f;
@@ -364,6 +333,13 @@ public class FirstScreen implements Screen {
             camera.position.x = playerX - thresholdX + camera.viewportWidth / 2f;
         } else {
             camera.position.x = camera.viewportWidth / 2f;
+        }
+
+        // Vertical follow
+        if (playerY > Constants.startY + Constants.cameraFollowThresholdY) {
+            camera.position.y = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
+        } else {
+            camera.position.y = camera.viewportHeight / 2f;
         }
 
         camera.update();

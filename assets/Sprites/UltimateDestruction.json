@@ -1,5 +1,8 @@
 {
   "level_name" : "Ultimate Destruction",
+  "level_completeness%" : 0,
+  "collected_keys" : 0,
+  "completed" : "no",
   "layout" : [
     {"type" : "spike", "x" : 7, "y" : 0},
     {"type" : "spike", "x" : 8, "y" : 0},
@@ -27,6 +30,10 @@
     {"type" : "spike", "x" : 33, "y" : 0},
     {"type" : "spike", "x" : 34, "y" : 0},
 
-    {"type" : "orb", "x" : 31, "y" : 2}
+    {"type" : "orb", "x" : 31, "y" : 2},
+
+    {"type" :  "chain", "x" : 53, "y" : 3},
+    {"type" :  "spikedeco", "x" : 56, "y" : 0},
+    {"type" :  "torch", "x" : 60, "y" : 1}
   ]
 }
