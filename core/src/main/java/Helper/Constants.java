@@ -3,7 +3,24 @@ package Helper;
 import com.badlogic.gdx.Gdx;
 
 public class Constants {
-    public static String playerSkinPath = "Sprites/Icons/Cubes/Cube-5.png";
+    public static String playerSkin1Path = "Sprites/Icons/Cubes/Cube-1.png";
+    public static String playerSkin2Path = "Sprites/Icons/Cubes/Cube-2.png";
+    public static String playerSkin3Path = "Sprites/Icons/Cubes/Cube-3.png";
+    public static String playerSkin4Path = "Sprites/Icons/Cubes/Cube-4.png";
+    public static String playerSkin5Path = "Sprites/Icons/Cubes/Cube-5.png";
+    public static String playerSkin6Path = "Sprites/Icons/Cubes/Cube-6.png";
+    public static String playerSkin7Path = "Sprites/Icons/Cubes/Cube-7.png";
+    public static String selectedPath = "Sprites/Menu Objects/Icon Selector/Selected.png";
+
+    public static String levelSelectBackgroundPath = "Sprites/Menu Objects/Level Selector/Level-Select-BG.png";
+    public static String hardFacePath = "Sprites/Menu Objects/Level Selector/Hard-Face.png";
+    public static String harderFacePath = "Sprites/Menu Objects/Level Selector/Harder-Face.png";
+    public static String insaneFacePath = "Sprites/Menu Objects/Level Selector/Insane-Face.png";
+    public static String arrowPath = "Sprites/Menu Objects/Level Selector/Arrow.png";
+    public static String checkmarkPath = "Sprites/Menu Objects/Level Selector/Checkmark.png";
+    public static String checkmarkGreyedPath = "Sprites/Menu Objects/Level Selector/Checkmark-Greyed-out.png";
+    public static String keyPath = "Sprites/Interactables/Key-1.png";
+    public static String keyGreyedPath = "Sprites/Menu Objects/Level Selector/Key-Greyed-out.png";
 
     public static String spike1SkinPath = "Sprites/Spikes/Spike-1.png";
     public static String spike2SkinPath = "Sprites/Spikes/Spike-2.png";
@@ -35,6 +52,8 @@ public class Constants {
     public static String CogButtonPath = "Sprites/Menu Objects/Cog-Button.png";
     public static String greyedCogButtonPath = "Sprites/Menu Objects/Cog-Button-Greyed.png";
 
+    public static String IconSelectorBackgroundPath = "Sprites/Menu Objects/Icon Selector/Background.png";
+
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 
@@ -56,6 +75,8 @@ public class Constants {
     public static float cameraFollowThresholdX;
 
     public static float jumpHorizontalSpeed;
+
+    public static int difficultyFaceSize = 150;
 
     public static void init(){
         oneBlockHeight = Gdx.graphics.getWidth()/worldWidth;

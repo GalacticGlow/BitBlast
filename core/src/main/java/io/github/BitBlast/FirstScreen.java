@@ -38,6 +38,7 @@ public class FirstScreen implements Screen {
     private Texture backgroundTexture;
     private Texture groundTexture;
 
+    private int inputIgnoreFrames = 10;
 
     public float baseY;
 
@@ -133,7 +134,7 @@ public class FirstScreen implements Screen {
         Gdx.input.setInputProcessor(null);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (player == null) {
-            this.player = new Player(Constants.playerSkinPath, Constants.startX, Constants.startY);
+            this.player = new Player(Constants.playerSkin3Path, Constants.startX, Constants.startY);
         }
         baseY = Constants.startY;
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
@@ -324,7 +325,10 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
 
-
+        if (inputIgnoreFrames > 0) {
+            inputIgnoreFrames--;
+            return;
+        }
 
         if (!redFlashActive && !paused) {
             player.update(delta, blockList, jumpPadList, orbList);
