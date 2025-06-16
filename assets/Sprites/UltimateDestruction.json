@@ -3,8 +3,8 @@
   "level_completeness%" : 0,
   "collected_keys" : 0,
   "completed" : "no",
-  "colors" : ["YELLOW", "GREEN", "BLUE", "ORANGE"],
-  "color_trigger_interval" : 10,
+  "colors" : ["YELLOW", "GREEN", "BLUE", "ORANGE", "RED"],
+  "color_trigger_interval" : 20,
   "layout" : [
     {"type": "spike", "x": 10, "y": 0},
     {"type": "spike", "x": 11, "y": 0},
