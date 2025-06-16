@@ -138,7 +138,7 @@ public class Level1SelectorScreen implements Screen {
         }
 
         batch.begin();
-        batch.setColor(0.6f, 0.6f, 1f, 1f);
+        batch.setColor(0.14f, 0.64f, 1f, 1f);
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.setColor(Color.WHITE);
 

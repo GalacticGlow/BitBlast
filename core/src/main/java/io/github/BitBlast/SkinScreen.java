@@ -191,7 +191,7 @@ public class SkinScreen implements Screen {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         selectedSprite.draw(batch);
 
-        GlyphLayout layout = new GlyphLayout(font, "Select the icon");
+        GlyphLayout layout = new GlyphLayout(font, "Choose your character!");
         font.draw(batch, layout, (Gdx.graphics.getWidth() - layout.width) / 2f, Gdx.graphics.getHeight() * 3f / 4f);
 
         batch.end();
