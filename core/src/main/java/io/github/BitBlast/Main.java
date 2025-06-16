@@ -1,12 +1,10 @@
 package io.github.BitBlast;
 
-import Helper.Block;
 import Helper.Constants;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -31,6 +29,6 @@ public class Main extends Game {
         Constants.init();
 
         ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().setScreen(ScreenType.START);
+        ScreenManager.getInstance().setScreen(ScreenType.LEVEL1_SELECT);
     }
 }

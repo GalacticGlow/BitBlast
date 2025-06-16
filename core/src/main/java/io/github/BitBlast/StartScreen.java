@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -26,6 +27,7 @@ public class StartScreen implements Screen {
     private Sprite logoSprite;
     private Texture backgroundTexture;
     private TextureRegion backgroundTextureRegion;
+    private BitmapFont font;
 
     private final float PLAY_BUTTON_SIZE = 300;
     private final float SECONDARY_BUTTON_SIZE = (float) (PLAY_BUTTON_SIZE * 0.7);
@@ -47,6 +49,15 @@ public class StartScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 16;
+        parameter.color = Color.WHITE;
+        parameter.borderWidth = 2;
+        parameter.borderColor = Color.BLACK;
+        font = generator.generateFont(parameter);
+        generator.dispose();
+
         backgroundTexture = new Texture(Gdx.files.internal(Constants.backdropPath));
 
         Texture upTexturePlayButton = new Texture(Gdx.files.internal(Constants.playButtonPath));
@@ -58,11 +69,11 @@ public class StartScreen implements Screen {
 
         Button startButton = new Button(style);
         startButton.setSize(PLAY_BUTTON_SIZE, PLAY_BUTTON_SIZE);
-        startButton.setPosition((float) (Gdx.graphics.getWidth() / 2 - PLAY_BUTTON_SIZE / 2),
+        startButton.setPosition(Gdx.graphics.getWidth() / 2 - PLAY_BUTTON_SIZE / 2,
             (float) (Gdx.graphics.getHeight() / 3.25 - PLAY_BUTTON_SIZE / 2));
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, StartScreen.this, 1.5f);
+                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL1_SELECT, StartScreen.this, 1.5f);
             }
         });
 
@@ -138,6 +149,7 @@ public class StartScreen implements Screen {
         batch.setColor(Color.WHITE);
 
         logoSprite.draw(batch);
+        font.draw(batch, "By BitCrusaders", 5, 20);
 
         batch.end();
 

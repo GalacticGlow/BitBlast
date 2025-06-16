@@ -43,6 +43,12 @@ public class ScreenManager {
                 return new SkinScreen(game, camera);
             case SETTINGS:
                 return new SetingsScreen(game, camera);
+            case LEVEL1_SELECT:
+                return new Level1SelectorScreen(game, camera);
+            case LEVEL2_SELECT:
+                return new Level2SelectorScreen(game, camera);
+            case LEVEL3_SELECT:
+                return new Level3SelectorScreen(game, camera);
             case FIRST_LEVEL:
                 return new FirstScreen(game, camera);
             default:

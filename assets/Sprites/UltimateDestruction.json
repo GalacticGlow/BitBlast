@@ -4,8 +4,9 @@
   "collected_keys" : 0,
   "completed" : "no",
   "layout" : [
-    {"type" : "spike", "x" : 7, "y" : 0},
+    {"type" : "spike", "x" : 7.5, "y" : 0},
     {"type" : "spike", "x" : 8, "y" : 0},
+    {"type" : "spike", "x" : 9, "y" : 0},
 
     {"type" : "jumppad", "x" : 11, "y" : 0},
     {"type" : "spike", "x" : 12, "y" : 0},
