@@ -6,14 +6,117 @@
   "colors" : ["YELLOW", "GREEN", "BLUE", "ORANGE"],
   "color_trigger_interval" : 10,
   "layout" : [
-    {"type" : "spike", "x" : 7, "y" : 0},
-    {"type" : "spike", "x" : 8, "y" : 0},
-    {"type" : "halfspike", "x" : 9, "y" : 0},
+    {"type": "spike", "x": 10, "y": 0},
+    {"type": "spike", "x": 11, "y": 0},
 
-    {"type" : "orb", "x" : 31, "y" : 2},
+    {"type": "halfspike", "x": 15, "y": 0},
+    {"type": "halfspike", "x": 16, "y": 0},
+    {"type": "halfspike", "x": 17, "y": 0},
+    {"type": "halfspike", "x": 18, "y": 0},
+    {"type": "halfspike", "x": 19, "y": 0},
 
-    {"type" :  "chain", "x" : 53, "y" : 3},
-    {"type" :  "spikedeco", "x" : 56, "y" : 0},
-    {"type" :  "torch", "x" : 60, "y" : 1}
+    {"type": "orb", "x": 17, "y": 1},
+
+    {"type": "halfspike", "x": 24, "y": 0},
+    {"type": "spike", "x": 25, "y": 0},
+    {"type": "spike", "x": 26, "y": 0},
+
+    {"type": "halfspike", "x": 31, "y": 0},
+    {"type": "halfspike", "x": 32, "y": 0},
+    {"type": "halfspike", "x": 33, "y": 0},
+    {"type": "halfspike", "x": 34, "y": 0},
+    {"type": "halfspike", "x": 35, "y": 0},
+    {"type": "halfspike", "x": 36, "y": 0},
+
+    {"type": "orb", "x": 34, "y": 1},
+
+    {"type" :  "block", "x" : 38, "y" : 0},
+    {"type" :  "block", "x" : 38, "y" : 1},
+    {"type" :  "block", "x" : 38, "y" : 2},
+    {"type" :  "block", "x" : 42, "y" : 0},
+    {"type" :  "block", "x" : 42, "y" : 1},
+    {"type" :  "block", "x" : 42, "y" : 2},
+    {"type" :  "block", "x" : 42, "y" : 3},
+
+    {"type": "orb", "x": 46, "y": 6},
+
+    {"type": "orb", "x": 51, "y": 4},
+
+    {"type" : "block", "x" : 56, "y" : 0},
+    {"type" : "block", "x" : 56, "y" : 1},
+
+    {"type": "spikefloor", "x": 39, "y": 0},
+    {"type": "spikefloor", "x": 40, "y": 0},
+    {"type": "spikefloor", "x": 41, "y": 0},
+    {"type": "spikefloor", "x": 42, "y": 0},
+    {"type": "spikefloor", "x": 43, "y": 0},
+    {"type": "spikefloor", "x": 44, "y": 0},
+    {"type": "spikefloor", "x": 45, "y": 0},
+    {"type": "spikefloor", "x": 46, "y": 0},
+    {"type": "spikefloor", "x": 47, "y": 0},
+    {"type": "spikefloor", "x": 48, "y": 0},
+    {"type": "spikefloor", "x": 49, "y": 0},
+    {"type": "spikefloor", "x": 50, "y": 0},
+    {"type": "spikefloor", "x": 51, "y": 0},
+    {"type": "spikefloor", "x": 52, "y": 0},
+    {"type": "spikefloor", "x": 53, "y": 0},
+    {"type": "spikefloor", "x": 54, "y": 0},
+    {"type": "spikefloor", "x": 55, "y": 0},
+
+    {"type": "jumppad", "x": 61, "y": 0},
+
+    {"type": "spike", "x": 63, "y": 0},
+
+    {"type": "spikefloor", "x": 64, "y": 0},
+    {"type": "spikefloor", "x": 65, "y": 0},
+    {"type": "spikefloor", "x": 66, "y": 0},
+    {"type": "spikefloor", "x": 67, "y": 0},
+    {"type": "spikefloor", "x": 68, "y": 0},
+    {"type": "spikefloor", "x": 69, "y": 0},
+    {"type": "spikefloor", "x": 70, "y": 0},
+    {"type": "spikefloor", "x": 71, "y": 0},
+    {"type": "spikefloor", "x": 72, "y": 0},
+
+    {"type": "slab", "x": 66, "y": 2},
+    {"type": "slab", "x": 67, "y": 2},
+    {"type": "slab", "x": 68, "y": 2},
+    {"type": "slab", "x": 69, "y": 2},
+
+    {"type": "spike", "x": 68, "y": 2.5},
+    {"type": "spike", "x": 69, "y": 2.5},
+
+    {"type" : "block", "x" : 72, "y" : 0},
+    {"type": "spike", "x": 73, "y": 0},
+    {"type": "spike", "x": 74, "y": 0},
+    {"type": "spike", "x": 75, "y": 0},
+
+    {"type": "spike", "x": 79, "y": 0},
+    {"type": "spike", "x": 80, "y": 0},
+    {"type": "halfspike", "x": 81, "y": 0},
+    {"type": "orb", "x": 82, "y": 1},
+    {"type": "spike", "x": 82, "y": 0},
+    {"type": "spike", "x": 83, "y": 0},
+    {"type": "spike", "x": 84, "y": 0},
+    {"type": "spike", "x": 85, "y": 0},
+
+    {"type": "spike", "x": 91, "y": 0},
+    {"type": "spike", "x": 92, "y": 0},
+    {"type": "spike", "x": 93, "y": 0},
+
+    {"type": "spike", "x": 97, "y": 0},
+    {"type": "spike", "x": 98, "y": 0},
+    {"type": "spike", "x": 99, "y": 0},
+
+    {"type": "jumppad", "x": 104, "y": 0},
+    {"type": "jumppad", "x": 105, "y": 0},
+    {"type": "jumppad", "x": 106, "y": 0},
+
+    {"type": "spike", "x": 107, "y": 0},
+    {"type": "spike", "x": 108, "y": 0},
+    {"type": "spike", "x": 109, "y": 0},
+    {"type": "spike", "x": 110, "y": 0},
+
+    {"type": "halfspike", "x": 114, "y": 0},
+    {"type": "spike", "x": 115, "y": 0}
   ]
 }

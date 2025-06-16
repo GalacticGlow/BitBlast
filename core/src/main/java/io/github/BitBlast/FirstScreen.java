@@ -128,11 +128,19 @@ public class FirstScreen implements Screen {
                         spikeList.add(spike);
                     }
                     break;
+                case "spikefloor":
+                    Spike spike = new Spike(Constants.spike3SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight);
+                    spike.hitBox.width = Constants.oneBlockWidth;
+                    spike.hitBox.height = spike.getHitBox().height/2;
+                    spike.hitBox.x = x;
+                    spike.hitBox.y = spike.getHitBox().y - 25;
+                    spikeList.add(spike);
+                    break;
                 case "block":
                     blockList.add(new Block(Constants.blockSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "slab":
-                    blockList.add(new Block(Constants.slabSkinPath, x, y + Constants.oneBlockHeight/2, Constants.oneBlockWidth, Constants.oneBlockHeight/2));
+                    blockList.add(new Block(Constants.slabSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight/2));
                     break;
                 case "jumppad":
                     jumpPadList.add(new JumpPad(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
@@ -144,7 +152,7 @@ public class FirstScreen implements Screen {
                     decorationList.add(new Decoration(Constants.chainDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
                     break;
                 case "spikedeco":
-                    decorationList.add(new Decoration(Constants.spikeDecoPath, x, y, 2*Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    decorationList.add(new Decoration(Constants.spikeDecoPath, x, y, 3*Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "torch":
                     decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 1.5f*Constants.oneBlockHeight));
@@ -417,7 +425,7 @@ public class FirstScreen implements Screen {
             targetY = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
         }
 
-        float smoothingY = 0.015f; // vertical follows more slowly
+        float smoothingY = 0.08f; // vertical follows more slowly
 
         if (!player.isAlive()) {
             camera.position.set(deathCameraPosition);
