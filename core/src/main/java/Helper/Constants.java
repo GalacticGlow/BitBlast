@@ -91,7 +91,7 @@ public class Constants {
         jumpVelocity = (float)Math.sqrt(2 * -acceleration * maxHeight);
 
         cameraFollowThresholdX = Constants.oneBlockWidth * 4; // After 4 blocks
-        cameraFollowThresholdY = Constants.oneBlockHeight * 3;
+        cameraFollowThresholdY = Constants.oneBlockHeight * 6;
 
         jumpHorizontalSpeed = Constants.xSpeed * Constants.oneBlockWidth; // or whatever speed you want
     }
