@@ -326,12 +326,6 @@ public class FirstScreen implements Screen {
         }
         batch.end();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        for (Spike spike : spikeList) {
-            shapeRenderer.rect(spike.hitBoxData()[0], spike.hitBoxData()[1], spike.hitBoxData()[2], spike.hitBoxData()[3]);
-        }
-        shapeRenderer.end();
-
         if (redFlashActive) {
             redFlashTimer -= delta;
 

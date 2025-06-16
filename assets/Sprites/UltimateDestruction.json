@@ -21,7 +21,6 @@
     {"type": "spike", "x": 25, "y": 0},
     {"type": "spike", "x": 26, "y": 0},
 
-    {"type": "halfspike", "x": 31, "y": 0},
     {"type": "halfspike", "x": 32, "y": 0},
     {"type": "halfspike", "x": 33, "y": 0},
     {"type": "halfspike", "x": 34, "y": 0},
