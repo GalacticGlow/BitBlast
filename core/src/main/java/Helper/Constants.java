@@ -42,8 +42,6 @@ public class Constants {
 
     public static String jumpPadPath = "Sprites/Interactables/Pad-1.png";
 
-
-
     public static String logoPath = "Sprites/Menu Objects/Logo.png";
     public static String playButtonPath = "Sprites/Menu Objects/Play-Button.png";
     public static String greyedPlayButtonPath = "Sprites/Menu Objects/Play-Button-Greyed.png";

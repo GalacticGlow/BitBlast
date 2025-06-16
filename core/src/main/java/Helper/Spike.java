@@ -33,6 +33,20 @@ public class Spike {
         sprite.setOriginCenter();
     }
 
+    public Spike(String skinPath, float x, float y, float spikeWidth, float spikeHeight, float rotation) {
+        this.spikeWidth = spikeWidth;
+        this.spikeHeight = spikeHeight;
+        this.spikeX = x;
+        this.spikeY =y;
+        Texture texture = new Texture(skinPath);
+        sprite = new Sprite(texture);
+        sprite.setSize(spikeWidth, spikeHeight);
+        sprite.setPosition(x, y);
+        this.hitBox = new Rectangle(x + Constants.oneBlockHeight*hitBoxXOffsetCoefficient, y + Constants.oneBlockHeight*hitBoxYOffsetCoefficient, Constants.oneBlockWidth*hitBoxWidthCoefficient, Constants.oneBlockHeight*hitBoxHeightCoefficient);
+        sprite.setOriginCenter();
+        sprite.setRotation(rotation);
+    }
+
     public void draw(SpriteBatch batch) {
         sprite.draw(batch);
     }

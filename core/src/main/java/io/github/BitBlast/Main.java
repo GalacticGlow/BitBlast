@@ -29,6 +29,6 @@ public class Main extends Game {
         Constants.init();
 
         ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().setScreen(ScreenType.LEVEL1_SELECT);
+        ScreenManager.getInstance().setScreen(ScreenType.START);
     }
 }

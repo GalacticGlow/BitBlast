@@ -3,33 +3,12 @@
   "level_completeness%" : 0,
   "collected_keys" : 0,
   "completed" : "no",
+  "colors" : ["YELLOW", "GREEN", "BLUE", "ORANGE"],
+  "color_trigger_interval" : 10,
   "layout" : [
-    {"type" : "spike", "x" : 7.5, "y" : 0},
+    {"type" : "spike", "x" : 7, "y" : 0},
     {"type" : "spike", "x" : 8, "y" : 0},
-    {"type" : "spike", "x" : 9, "y" : 0},
-
-    {"type" : "jumppad", "x" : 11, "y" : 0},
-    {"type" : "spike", "x" : 12, "y" : 0},
-    {"type" : "spike", "x" : 13, "y" : 0},
-    {"type" : "spike", "x" : 14, "y" : 0},
-    {"type" : "spike", "x" : 15, "y" : 0},
-
-    {"type" : "block", "x" : 21, "y" : 0},
-    {"type" : "block", "x" : 21, "y" : 1},
-    {"type" : "block", "x" : 24, "y" : 0},
-    {"type" : "block", "x" : 24, "y" : 1},
-    {"type" : "block", "x" : 24, "y" : 2},
-    {"type" : "block", "x" : 24, "y" : 3},
-    {"type" : "block", "x" : 27, "y" : 0},
-    {"type" : "block", "x" : 27, "y" : 1},
-
-    {"type" : "spike", "x" : 28, "y" : 0},
-    {"type" : "spike", "x" : 29, "y" : 0},
-    {"type" : "spike", "x" : 30, "y" : 0},
-    {"type" : "spike", "x" : 31, "y" : 0},
-    {"type" : "spike", "x" : 32, "y" : 0},
-    {"type" : "spike", "x" : 33, "y" : 0},
-    {"type" : "spike", "x" : 34, "y" : 0},
+    {"type" : "halfspike", "x" : 9, "y" : 0},
 
     {"type" : "orb", "x" : 31, "y" : 2},
 

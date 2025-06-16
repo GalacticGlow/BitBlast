@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 
@@ -27,14 +28,6 @@ public class FirstScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     private Player player;
 
-    private Texture redBlock;
-    private Texture orangeBlock;
-    private Texture yellowBlock;
-    private Texture greenBlock;
-    private Texture blueBlock;
-    private Texture indigoBlock;
-    private Texture violetBlock;
-
     private Texture backgroundTexture;
     private Texture groundTexture;
 
@@ -42,11 +35,19 @@ public class FirstScreen implements Screen {
 
     public float baseY;
 
-    ArrayList<Spike> spikeList = new ArrayList<>();
-
     private boolean redFlashActive = false;
     private float redFlashTimer = 0.7f;
     private BitmapFont font;
+
+    public Color[] rainbowColors = {
+        Color.RED,
+        Color.ORANGE,
+        Color.YELLOW,
+        Color.GREEN,
+        Color.BLUE,
+        new Color(75 / 255f, 0, 130 / 255f, 1), // Indigo
+        new Color(143 / 255f, 0, 255 / 255f, 1) // Violet
+    };
 
     public ArrayList<Spike> spikeList = new ArrayList<>();
     public ArrayList<Block> blockList = new ArrayList<>();
@@ -54,7 +55,15 @@ public class FirstScreen implements Screen {
     public ArrayList<Orb> orbList = new ArrayList<>();
     public ArrayList<Decoration> decorationList = new ArrayList<>();
 
+    public String[] levelColorList;
+
     private boolean paused = false;
+
+    private float accumulator = 0f;
+    private static final float UPDATE_DELTA = 1f / 60f; // 60 updates per second
+
+    public int collected_keys;
+    public int current_keys;
 
     public FirstScreen(Main game, OrthographicCamera camera) {
         this.game = game;
@@ -68,7 +77,14 @@ public class FirstScreen implements Screen {
         JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
 
         JsonValue layout = base.get("layout");
-        System.out.println("layout = " + layout);
+        JsonValue colorsArray = base.get("colors");
+
+        ArrayList<String> colors = new ArrayList<>();
+        for (JsonValue color : colorsArray) {
+            colors.add(color.asString());
+        }
+
+        collected_keys = base.get("collected_keys").asInt();
 
         for (JsonValue item = layout.child; item != null; item = item.next) {
             String type = item.getString("type");
@@ -77,10 +93,34 @@ public class FirstScreen implements Screen {
 
             switch (type){
                 case "spike":
-                    spikeList.add(new Spike(Constants.spike1SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    JsonValue rotation = item.get("rotation");
+                    if (rotation !=null) {
+                        spikeList.add(new Spike(Constants.spike1SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight, rotation.asFloat()));
+                    }
+                    else {
+                        spikeList.add(new Spike(Constants.spike1SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    }
+                    break;
+                case "halfspike":
+                    rotation = item.get("rotation");
+                    if (rotation != null) {
+                        Spike spike = new Spike(Constants.spike2SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight/2, rotation.asFloat());
+                        spike.hitBox.height = spike.getHitBox().height/2;
+                        spike.hitBox.y = spike.getHitBox().y - 15;
+                        spikeList.add(spike);
+                    }
+                    else {
+                        Spike spike = new Spike(Constants.spike2SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight/2);
+                        spike.hitBox.height = spike.getHitBox().height/2;
+                        spike.hitBox.y = spike.getHitBox().y - 15;
+                        spikeList.add(spike);
+                    }
                     break;
                 case "block":
                     blockList.add(new Block(Constants.blockSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "slab":
+                    blockList.add(new Block(Constants.slabSkinPath, x, y + Constants.oneBlockHeight/2, Constants.oneBlockWidth, Constants.oneBlockHeight/2));
                     break;
                 case "jumppad":
                     jumpPadList.add(new JumpPad(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
@@ -132,7 +172,6 @@ public class FirstScreen implements Screen {
         int startTileY = (int) Math.floor(cameraBottom / bgHeight);
         int endTileY = (int) Math.ceil(cameraTop / bgHeight);
 
-
         batch.setColor(0f, 0f, 1.0f, 1.0f);
         for (int x = startTileX; x <= endTileX; x++) {
             for (int y = startTileY; y <= endTileY; y++) {
@@ -169,20 +208,20 @@ public class FirstScreen implements Screen {
     @Override
     public void render(float delta) {
         if (player == null || backgroundTexture == null || groundTexture == null) return;
-        Texture[] rainbowBlocks = {
-            redBlock, orangeBlock, yellowBlock, greenBlock,
-            blueBlock, indigoBlock, violetBlock
-        };
 
-        update(delta);
-        checkForCollisions();
-        if (!player.isAlive()){
-            die();
+        if (delta > 0.25f) delta = 0.25f;
+        accumulator += delta;
+
+        while (accumulator >= UPDATE_DELTA) {
+            update(UPDATE_DELTA);
+            checkForCollisions();
+
+            if (!player.isAlive()) {
+                die();
+            }
+
+            accumulator -= UPDATE_DELTA;
         }
-
-//        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-//            game.setScreen(new StartScreen(game, camera));
-//        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
             paused = true;
@@ -195,35 +234,13 @@ public class FirstScreen implements Screen {
             return;
         }
 
-
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        Color[] rainbowColors = {
-            Color.RED,
-            Color.ORANGE,
-            Color.YELLOW,
-            Color.GREEN,
-            Color.BLUE,
-            new Color(75 / 255f, 0, 130 / 255f, 1), // Indigo
-            new Color(143 / 255f, 0, 255 / 255f, 1) // Violet
-        };
-
         int startBlock = (int)(camera.position.x - camera.viewportWidth / 2) / Constants.oneBlockWidth;
         int endBlock = (int)(camera.position.x + camera.viewportWidth / 2) / Constants.oneBlockWidth;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        for (int i = startBlock; i <= endBlock; i++) {
-            Color color = rainbowColors[Math.floorMod(i, rainbowColors.length)];
-            shapeRenderer.setColor(color);
-            float x = i * Constants.oneBlockWidth;
-            shapeRenderer.rect(x, 0, Constants.oneBlockWidth, Constants.oneBlockHeight);
-        }
-
-        shapeRenderer.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -328,29 +345,31 @@ public class FirstScreen implements Screen {
         player.getSprite().setRotation(0);
     }
 
-    private void cameraUpdate(){
-        if(paused) {
-            return;
-        }
+    private void cameraUpdate() {
+        if (paused) return;
 
         float playerX = player.getX();
         float playerY = player.getY();
 
-        // Only move the camera if player has moved past the threshold
         float thresholdX = camera.viewportWidth / 3f;
+        float targetX = camera.viewportWidth / 2f;
+        float targetY = camera.viewportHeight / 2f;
 
+        // Target X
         if (playerX > thresholdX) {
-            camera.position.x = playerX - thresholdX + camera.viewportWidth / 2f;
-        } else {
-            camera.position.x = camera.viewportWidth / 2f;
+            targetX = playerX - thresholdX + camera.viewportWidth / 2f;
         }
 
-        // Vertical follow
+        // Target Y
         if (playerY > Constants.startY + Constants.cameraFollowThresholdY) {
-            camera.position.y = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
-        } else {
-            camera.position.y = camera.viewportHeight / 2f;
+            targetY = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
         }
+
+        float smoothingX = 0.1f; // smoother = lower value
+        float smoothingY = 0.015f; // vertical follows more slowly
+
+        camera.position.x += (targetX - camera.position.x) * smoothingX;
+        camera.position.y += (targetY - camera.position.y) * smoothingY;
 
         camera.update();
     }
