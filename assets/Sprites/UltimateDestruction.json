@@ -224,16 +224,16 @@
 
     {"type": "orb", "x": 180, "y": 3},
 
+    {"type": "spikefloor", "x": 177, "y": 0},
+    {"type": "spikefloor", "x": 178, "y": 0},
+    {"type": "spikefloor", "x": 179, "y": 0},
+    {"type": "spikefloor", "x": 180, "y": 0},
     {"type": "spikefloor", "x": 181, "y": 0},
     {"type": "spikefloor", "x": 182, "y": 0},
     {"type": "spikefloor", "x": 183, "y": 0},
     {"type": "spikefloor", "x": 184, "y": 0},
-    {"type": "spikefloor", "x": 185, "y": 0},
-    {"type": "spikefloor", "x": 186, "y": 0},
-    {"type": "spikefloor", "x": 187, "y": 0},
-    {"type": "spikefloor", "x": 188, "y": 0},
 
-    {"type" : "block", "x" : 189, "y" : 0},
+    {"type" : "block", "x" : 185, "y" : 0},
 
     {"type": "halfspike", "x": 194, "y": 0},
     {"type": "spike", "x": 195, "y": 0},
