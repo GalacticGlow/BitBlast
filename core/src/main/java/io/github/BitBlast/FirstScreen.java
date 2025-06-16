@@ -65,7 +65,7 @@ public class FirstScreen implements Screen {
     private boolean paused = false;
 
     private float accumulator = 0f;
-    private static final float UPDATE_DELTA = 1f / 60f; // 60 updates per second
+    private static final float UPDATE_DELTA = 1f / 240f; // 60 updates per second
 
     public int collected_keys;
     public int current_keys;
@@ -419,7 +419,7 @@ public class FirstScreen implements Screen {
             targetY = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
         }
 
-        float smoothingY = 0.08f; // vertical follows more slowly
+        float smoothingY = 0.02f; // vertical follows more slowly
 
         if (!player.isAlive()) {
             camera.position.set(deathCameraPosition);
