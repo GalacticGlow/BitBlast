@@ -72,6 +72,8 @@ public class FirstScreen implements Screen {
 
     public Vector3 deathCameraPosition = new Vector3();
 
+    private int lastColorIndex = -1;
+
     public FirstScreen(Main game, OrthographicCamera camera) {
         this.game = game;
         this.camera = camera;
@@ -169,6 +171,8 @@ public class FirstScreen implements Screen {
     }
 
     private void updateBackgroundColor(float delta) {
+        if (!player.isAlive()) return;
+
         transitionTimer += delta;
 
         float progress = Math.min(transitionTimer / transitionDuration, 1f);
@@ -178,10 +182,8 @@ public class FirstScreen implements Screen {
             colorIndex = (colorIndex + 1) % levelColors.length;
             transitionTimer = 0f;
 
-            // Update target color
             targetColor.set((Color) allColors.get(levelColors[colorIndex]));
 
-            // Reset currentColor to where it just ended (important)
             currentColor.set(currentColor);
         }
     }
@@ -238,6 +240,15 @@ public class FirstScreen implements Screen {
         return (Color) allColors.get(levelColors[index]);
     }
 
+    private void updateCurrentColor() {
+        int currentIndex = (int)((player.getX() / Constants.oneBlockWidth) / triggerInterval) % levelColors.length;
+
+        if (currentIndex != lastColorIndex) {
+            lastColorIndex = currentIndex;
+            currentColor = new Color((Color) allColors.get(levelColors[currentIndex]));
+        }
+    }
+
     @Override
     public void render(float delta) {
         if (player == null || backgroundTexture == null || groundTexture == null) return;
@@ -246,13 +257,13 @@ public class FirstScreen implements Screen {
         accumulator += delta;
 
         while (accumulator >= UPDATE_DELTA) {
-            update(UPDATE_DELTA);
-            checkForCollisions();
-
             if (!player.isAlive()) {
                 deathCameraPosition.set(camera.position);
                 die();
             }
+
+            update(UPDATE_DELTA);
+            checkForCollisions();
 
             accumulator -= UPDATE_DELTA;
         }
@@ -283,9 +294,11 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        updateBackgroundColor(delta);
-        drawRepeatingBackground();
-        drawRepeatingGround();
+        if (player.isAlive()) {
+            updateCurrentColor();
+            drawRepeatingBackground();
+            drawRepeatingGround();
+        }
 
         player.getSprite().draw(batch);
         for (Spike spike : spikeList) {
@@ -378,6 +391,10 @@ public class FirstScreen implements Screen {
         player.curYSpeed = 0;
         player.alive = true;
         player.getSprite().setRotation(0);
+        transitionTimer = 0f;
+        colorIndex = 0;
+        currentColor = new Color((Color) allColors.get(levelColors[colorIndex]));
+        targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
     }
 
     private void cameraUpdate() {
