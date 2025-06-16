@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FirstScreen implements Screen {
 
@@ -39,15 +41,10 @@ public class FirstScreen implements Screen {
     private float redFlashTimer = 0.7f;
     private BitmapFont font;
 
-    public Color[] rainbowColors = {
-        Color.RED,
-        Color.ORANGE,
-        Color.YELLOW,
-        Color.GREEN,
-        Color.BLUE,
-        new Color(75 / 255f, 0, 130 / 255f, 1), // Indigo
-        new Color(143 / 255f, 0, 255 / 255f, 1) // Violet
-    };
+    public Map allColors = Map.of("BLUE", Color.BLUE, "YELLOW", Color.YELLOW,
+        "GREEN", Color.GREEN, "ORANGE", Color.ORANGE,
+        "RED", Color.RED, "WHITE", Color.WHITE,
+        "BLACK", Color.BLACK, "PINK", new Color(252 ,19, 192, 1));
 
     public ArrayList<Spike> spikeList = new ArrayList<>();
     public ArrayList<Block> blockList = new ArrayList<>();
@@ -55,7 +52,15 @@ public class FirstScreen implements Screen {
     public ArrayList<Orb> orbList = new ArrayList<>();
     public ArrayList<Decoration> decorationList = new ArrayList<>();
 
+    ArrayList<String> colors = new ArrayList<>();
+    String[] levelColors;
     public String[] levelColorList;
+    public int triggerInterval;
+    private Color currentColor = new Color(Color.WHITE);
+    private Color targetColor = new Color(Color.WHITE);
+    private float transitionTimer = 0f;
+    private float transitionDuration = 1f; // seconds
+    private int colorIndex = 0;
 
     private boolean paused = false;
 
@@ -64,6 +69,8 @@ public class FirstScreen implements Screen {
 
     public int collected_keys;
     public int current_keys;
+
+    public Vector3 deathCameraPosition = new Vector3();
 
     public FirstScreen(Main game, OrthographicCamera camera) {
         this.game = game;
@@ -78,11 +85,14 @@ public class FirstScreen implements Screen {
 
         JsonValue layout = base.get("layout");
         JsonValue colorsArray = base.get("colors");
+        triggerInterval = base.get("color_trigger_interval").asInt();
 
-        ArrayList<String> colors = new ArrayList<>();
         for (JsonValue color : colorsArray) {
             colors.add(color.asString());
         }
+        levelColors = colors.toArray(new String[colors.size()]);
+        currentColor = new Color((Color) allColors.get(levelColors[colorIndex])); // make a copy
+        targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
 
         collected_keys = base.get("collected_keys").asInt();
 
@@ -158,6 +168,24 @@ public class FirstScreen implements Screen {
         generateLevel("Sprites/UltimateDestruction.json");
     }
 
+    private void updateBackgroundColor(float delta) {
+        transitionTimer += delta;
+
+        float progress = Math.min(transitionTimer / transitionDuration, 1f);
+        currentColor.lerp(targetColor, progress);
+
+        if (progress >= 1f) {
+            colorIndex = (colorIndex + 1) % levelColors.length;
+            transitionTimer = 0f;
+
+            // Update target color
+            targetColor.set((Color) allColors.get(levelColors[colorIndex]));
+
+            // Reset currentColor to where it just ended (important)
+            currentColor.set(currentColor);
+        }
+    }
+
     private void drawRepeatingBackground() {
         float bgWidth = 24 * Constants.oneBlockWidth;
         float bgHeight = 24 * Constants.oneBlockWidth;
@@ -172,13 +200,14 @@ public class FirstScreen implements Screen {
         int startTileY = (int) Math.floor(cameraBottom / bgHeight);
         int endTileY = (int) Math.ceil(cameraTop / bgHeight);
 
-        batch.setColor(0f, 0f, 1.0f, 1.0f);
+        batch.setColor(currentColor);
         for (int x = startTileX; x <= endTileX; x++) {
             for (int y = startTileY; y <= endTileY; y++) {
                 float drawX = x * bgWidth;
                 float drawY = y * bgHeight;
                 batch.draw(backgroundTexture, drawX, drawY, bgWidth, bgHeight);
             }
+
         }
         batch.setColor(Color.WHITE);
     }
@@ -196,13 +225,17 @@ public class FirstScreen implements Screen {
         int startTileX = (int) Math.floor(cameraLeft / groundWidth);
         int endTileX = (int) Math.ceil(cameraRight / groundWidth);
 
-
-        batch.setColor(0f, 0f, 1.0f, 1.0f);
+        batch.setColor(currentColor);
         for (int x = startTileX; x <= endTileX; x++) {
             float drawX = x*groundWidth;
             batch.draw(groundTexture, drawX, groundBottom, groundWidth, totalGroundHeight);
         }
         batch.setColor(Color.WHITE);
+    }
+
+    public Color cycleColors(){
+        int index = (int)((player.getX()/Constants.oneBlockWidth / triggerInterval) % levelColors.length);
+        return (Color) allColors.get(levelColors[index]);
     }
 
     @Override
@@ -217,6 +250,7 @@ public class FirstScreen implements Screen {
             checkForCollisions();
 
             if (!player.isAlive()) {
+                deathCameraPosition.set(camera.position);
                 die();
             }
 
@@ -249,6 +283,7 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        updateBackgroundColor(delta);
         drawRepeatingBackground();
         drawRepeatingGround();
 
@@ -351,7 +386,7 @@ public class FirstScreen implements Screen {
         float playerX = player.getX();
         float playerY = player.getY();
 
-        float thresholdX = camera.viewportWidth / 3f;
+        float thresholdX = camera.viewportWidth * 0.3f;
         float targetX = camera.viewportWidth / 2f;
         float targetY = camera.viewportHeight / 2f;
 
@@ -365,12 +400,15 @@ public class FirstScreen implements Screen {
             targetY = playerY - Constants.cameraFollowThresholdY + camera.viewportHeight / 2f;
         }
 
-        float smoothingX = 0.1f; // smoother = lower value
         float smoothingY = 0.015f; // vertical follows more slowly
 
-        camera.position.x += (targetX - camera.position.x) * smoothingX;
-        camera.position.y += (targetY - camera.position.y) * smoothingY;
-
+        if (!player.isAlive()) {
+            camera.position.set(deathCameraPosition);
+        }
+        else {
+            camera.position.x = targetX;
+            camera.position.y += (targetY - camera.position.y) * smoothingY;
+        }
         camera.update();
     }
 
