@@ -3,6 +3,7 @@ package io.github.BitBlast;
 import Helper.Constants;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
@@ -29,6 +30,6 @@ public class Main extends Game {
         Constants.init();
 
         ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().setScreen(ScreenType.START);
+        ScreenManager.getInstance().setScreen(ScreenType.MENU);
     }
 }

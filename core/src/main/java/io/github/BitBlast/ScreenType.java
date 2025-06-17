@@ -1,7 +1,7 @@
 package io.github.BitBlast;
 
 public enum ScreenType {
-    START,
+    MENU,
     SKIN,
     SETTINGS,
     LEVEL1_SELECT,

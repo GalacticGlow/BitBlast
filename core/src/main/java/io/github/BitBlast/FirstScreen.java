@@ -176,6 +176,11 @@ public class FirstScreen implements Screen {
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
         generateLevel("Sprites/UltimateDestruction.json");
+
+        MusicManager.rewind();
+        MusicManager.load(Constants.ultimateDestructionPath, false);
+        MusicManager.setVolume(1.0f);
+        MusicManager.play();
     }
 
     private void updateBackgroundColor(float delta) {
@@ -217,7 +222,6 @@ public class FirstScreen implements Screen {
                 float drawY = y * bgHeight;
                 batch.draw(backgroundTexture, drawX, drawY, bgWidth, bgHeight);
             }
-
         }
         batch.setColor(Color.WHITE);
     }
@@ -275,11 +279,16 @@ public class FirstScreen implements Screen {
 
             accumulator -= UPDATE_DELTA;
         }
+//        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+//            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, FirstScreen.this, 1f);
+//        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
             paused = true;
+            MusicManager.pause();
         } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && paused) {
             paused = false;
+            MusicManager.play();
         }
 
         if (paused) {
@@ -356,8 +365,8 @@ public class FirstScreen implements Screen {
         font.setColor(Color.BLACK);
         GlyphLayout layout = new GlyphLayout(font, "PAUSE");
         font.draw(batch, layout,
-            (Gdx.graphics.getWidth() - layout.width) / 2,
-            (Gdx.graphics.getHeight() + layout.height) / 2
+            (player.getX() + layout.width) / 2,
+            (player.getY() + layout.height)
         );
         batch.end();
     }
@@ -397,6 +406,10 @@ public class FirstScreen implements Screen {
         colorIndex = 0;
         currentColor = new Color((Color) allColors.get(levelColors[colorIndex]));
         targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
+
+        MusicManager.rewind();
+        MusicManager.play();
+        MusicManager.setVolume(1.0f);
     }
 
     private void cameraUpdate() {

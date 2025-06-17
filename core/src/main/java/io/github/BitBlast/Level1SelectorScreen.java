@@ -2,6 +2,7 @@ package io.github.BitBlast;
 
 import Helper.Constants;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,8 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-
-import java.awt.*;
 
 public class Level1SelectorScreen implements Screen {
 
@@ -125,8 +124,11 @@ public class Level1SelectorScreen implements Screen {
                 ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level1SelectorScreen.this, 1f);
             }
         });
-
         stage.addActor(arrowRight);
+
+        MusicManager.load(Constants.ultimateDestructionPath, true);
+        MusicManager.play();
+        MusicManager.setVolume(0.5f);
     }
 
     @Override
@@ -134,7 +136,7 @@ public class Level1SelectorScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.START, this, 1f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 1f);
         }
 
         batch.begin();
@@ -162,10 +164,10 @@ public class Level1SelectorScreen implements Screen {
         stage.draw();
 
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
+//        shapeRenderer.end();
     }
 
     @Override

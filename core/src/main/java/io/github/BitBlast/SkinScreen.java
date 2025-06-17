@@ -15,10 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
-import java.awt.*;
 
 public class SkinScreen implements Screen {
 
@@ -200,7 +197,7 @@ public class SkinScreen implements Screen {
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.START, this, 1.5f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 1.5f);
         }
     }
 

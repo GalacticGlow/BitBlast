@@ -37,8 +37,8 @@ public class ScreenManager {
         OrthographicCamera camera = new OrthographicCamera();
 
         switch (type) {
-            case START:
-                return new StartScreen(game, camera);
+            case MENU:
+                return new MenuScreen(game, camera);
             case SKIN:
                 return new SkinScreen(game, camera);
             case SETTINGS:

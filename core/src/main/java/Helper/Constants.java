@@ -56,6 +56,11 @@ public class Constants {
     public static String spikeDecoPath = "Sprites/Deco/Spikedeco-1.png";
     public static String torchDecoPath = "Sprites/Deco/Torch-1.png";
 
+    public static String backgroundMusicPath = "Sounds/Menu/MenuMusic.mp3";
+    public static String ultimateDestructionPath = "Sounds/Music/1-ultimate-destruction.mp3";
+    public static String eurodancerPath = "Sounds/Music/2-eurodancer.mp3";
+    public static String chaozAirflowPath = "Sounds/Music/3-chaoz-airflow.mp3";
+
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;
 

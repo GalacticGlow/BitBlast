@@ -8,13 +8,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-
-import java.awt.image.Kernel;
 
 public class SetingsScreen implements Screen {
 
@@ -52,7 +47,7 @@ public class SetingsScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.START, SetingsScreen.this, 1.5f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, SetingsScreen.this, 1.5f);
         }
     }
 
