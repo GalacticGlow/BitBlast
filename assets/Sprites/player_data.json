@@ -1,0 +1,21 @@
+{
+  "current_icon" : 4,
+  "percentage_ultimate_destruction" : 69,
+  "ud_keys" : [
+    {"ud_1" : false},
+    {"ud_2" : true},
+    {"ud_3" : false}
+  ],
+  "percentage_eurodancer" : 69,
+  "ed_keys" : [
+    {"ed_1" : true},
+    {"ed_2" : false},
+    {"ed_3" : false}
+  ],
+  "percentage_chaoz_airflow" : 69,
+  "ca_keys" : [
+    {"ca_1" : false},
+    {"ca_2" : false},
+    {"ca_3" : true}
+  ]
+}

@@ -22,13 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirstScreen implements Screen {
-
-    //    private Main game;
     private final Main game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private Player player;
+    private String curLevel;
 
     private Texture backgroundTexture;
     private Texture groundTexture;
@@ -67,18 +66,19 @@ public class FirstScreen implements Screen {
     private float accumulator = 0f;
     private static final float UPDATE_DELTA = 1f / 240f; // 60 updates per second
 
-    public int collected_keys;
-    public int current_keys;
+    public ArrayList<Key> curKeys;
 
     public Vector3 deathCameraPosition = new Vector3();
 
     private int lastColorIndex = -1;
 
-    public FirstScreen(Main game, OrthographicCamera camera) {
+    public FirstScreen(Main game, OrthographicCamera camera, String curLevel) {
         this.game = game;
         this.camera = camera;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
+        this.curLevel = curLevel;
+        this.curKeys = new ArrayList();
     }
 
     public void generateLevel(String fileName) {
@@ -95,8 +95,6 @@ public class FirstScreen implements Screen {
         levelColors = colors.toArray(new String[colors.size()]);
         currentColor = new Color((Color) allColors.get(levelColors[colorIndex])); // make a copy
         targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
-
-        collected_keys = base.get("collected_keys").asInt();
 
         for (JsonValue item = layout.child; item != null; item = item.next) {
             String type = item.getString("type");
@@ -180,6 +178,9 @@ public class FirstScreen implements Screen {
                     break;
                 case "torch":
                     decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
+                    break;
+                case "key":
+                    curKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
             }
         }
@@ -357,6 +358,11 @@ public class FirstScreen implements Screen {
         for (Decoration decoration : decorationList) {
             decoration.draw(batch);
         }
+        for (Key key : curKeys) {
+            if (key != null) {
+                key.draw(batch);
+            }
+        }
         batch.end();
 
         if (redFlashActive) {
@@ -405,7 +411,7 @@ public class FirstScreen implements Screen {
         }
 
         if (!redFlashActive && !paused) {
-            player.update(delta, blockList, jumpPadList, orbList);
+            player.update(delta, blockList, jumpPadList, orbList, curKeys);
         }
     }
 

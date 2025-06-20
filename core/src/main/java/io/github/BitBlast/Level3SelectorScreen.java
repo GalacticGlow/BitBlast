@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class Level3SelectorScreen implements Screen {
 
@@ -42,6 +44,8 @@ public class Level3SelectorScreen implements Screen {
     private Rectangle clickableZone;
     private ShapeRenderer shapeRenderer;
 
+    public boolean[] ca_keys;
+
     public Level3SelectorScreen(Main game, OrthographicCamera camera) {
         this.game = game;
         this.camera = camera;
@@ -50,8 +54,22 @@ public class Level3SelectorScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
     }
 
+    public void updateKeys(){
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+
+        JsonValue keysArray = base.get("ca_keys");
+        ca_keys = new boolean[3];
+
+        for (int i = 0; i < keysArray.size; i++) {
+            JsonValue keyObj = keysArray.get(i);
+            ca_keys[i] = keyObj.child().asBoolean();
+        }
+    }
+
     @Override
     public void show() {
+        updateKeys();
         background = new Texture(Gdx.files.internal(Constants.levelSelectBackgroundPath));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
@@ -95,9 +113,9 @@ public class Level3SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         checkmark = new Sprite(checkmarkGreyedTexture);
-        key1 = new Sprite(keyGreyedTexture);
-        key2 = new Sprite(keyGreyedTexture);
-        key3 = new Sprite(keyGreyedTexture);
+        key1 = new Sprite(ca_keys[0] ? keyTexture : keyGreyedTexture);
+        key2 = new Sprite(ca_keys[1] ? keyTexture : keyGreyedTexture);
+        key3 = new Sprite(ca_keys[2] ? keyTexture : keyGreyedTexture);
 
         int checkmarkSize = 120;
         checkmark.setSize(checkmarkSize, checkmarkSize);

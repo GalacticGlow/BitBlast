@@ -50,7 +50,7 @@ public class ScreenManager {
             case LEVEL3_SELECT:
                 return new Level3SelectorScreen(game, camera);
             case FIRST_LEVEL:
-                return new FirstScreen(game, camera);
+                return new FirstScreen(game, camera, "ud");
             default:
                 throw new IllegalArgumentException("Unknown screen type: " + type);
         }

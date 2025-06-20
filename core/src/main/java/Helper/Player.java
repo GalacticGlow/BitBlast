@@ -57,7 +57,7 @@ public class Player{
         return ((rotation % 360f) + 360f) % 360f;
     }
 
-    public void update(float delta, ArrayList<Block> blockList, ArrayList<JumpPad> jumpPadList, ArrayList<Orb> orbList) {
+    public void update(float delta, ArrayList<Block> blockList, ArrayList<JumpPad> jumpPadList, ArrayList<Orb> orbList, ArrayList<Key> curKeys) {
         float dx = delta * BASE_X_SPEED * Constants.oneBlockWidth;
         float x = sprite.getX() + dx;
         float y = sprite.getY();
@@ -98,6 +98,12 @@ public class Player{
             if (this.hitBox.overlaps(orb.getHitBox()) && orbTrigger) {
                 curYSpeed = JUMP_ORB_SPEED;
                 break;
+            }
+        }
+
+        for (Key key : curKeys) {
+            if (key != null && this.hitBox.overlaps(key.getHitBox())) {
+                curKeys.set(curKeys.indexOf(key), null);
             }
         }
 

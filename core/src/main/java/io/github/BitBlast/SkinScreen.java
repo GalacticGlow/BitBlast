@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class SkinScreen implements Screen {
@@ -39,6 +41,8 @@ public class SkinScreen implements Screen {
 
     private final int SKIN_BUTTON_SIZE = 170;
 
+    public int playerKeys = 0;
+
     public static boolean skin1Unlocked = true;
     public static boolean skin2Unlocked = false;
     public static boolean skin3Unlocked = false;
@@ -52,6 +56,33 @@ public class SkinScreen implements Screen {
         this.game = game;
         this.batch = new SpriteBatch();
         this.stage = new Stage(new ScreenViewport());
+    }
+
+    public void loadKeys(){//Дмитре, використай цей метод щоб отримати кількість ключів які гравець має зараз, і в залежності скільки їх будуть доступні різні іконки. Використай те число куди треба
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+
+        boolean[] ud_keys = base.get("ud_keys").asBooleanArray();
+        boolean[] ed_keys = base.get("ed_keys").asBooleanArray();
+        boolean[] ca_keys = base.get("ca_keys").asBooleanArray();
+
+        for (boolean ud_key : ud_keys) {
+            if (ud_key) {
+                playerKeys++;
+            }
+        }
+
+        for (boolean ed_key : ed_keys) {
+            if (ed_key) {
+                playerKeys++;
+            }
+        }
+
+        for (boolean ca_key : ca_keys) {
+            if (ca_key) {
+                playerKeys++;
+            }
+        }
     }
 
     @Override

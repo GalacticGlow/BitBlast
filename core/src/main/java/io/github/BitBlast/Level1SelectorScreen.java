@@ -16,9 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class Level1SelectorScreen implements Screen {
-
     private Main game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -43,6 +44,8 @@ public class Level1SelectorScreen implements Screen {
     private Rectangle clickableZone;
     private ShapeRenderer shapeRenderer;
 
+    public boolean[] ud_keys;
+
     public Level1SelectorScreen(Main game, OrthographicCamera camera) {
         this.game = game;
         this.camera = camera;
@@ -51,8 +54,22 @@ public class Level1SelectorScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
     }
 
+    public void updateKeys(){
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+
+        JsonValue keysArray = base.get("ud_keys");
+        ud_keys = new boolean[3];
+
+        for (int i = 0; i < keysArray.size; i++) {
+            JsonValue keyObj = keysArray.get(i);
+            ud_keys[i] = keyObj.child().asBoolean();
+        }
+    }
+
     @Override
     public void show() {
+        updateKeys();
         background = new Texture(Gdx.files.internal(Constants.levelSelectBackgroundPath));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
@@ -94,9 +111,9 @@ public class Level1SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         checkmark = new Sprite(checkmarkGreyedTexture);
-        key1 = new Sprite(keyGreyedTexture);
-        key2 = new Sprite(keyGreyedTexture);
-        key3 = new Sprite(keyGreyedTexture);
+        key1 = new Sprite(ud_keys[0] ? keyTexture : keyGreyedTexture);
+        key2 = new Sprite(ud_keys[1] ? keyTexture : keyGreyedTexture);
+        key3 = new Sprite(ud_keys[2] ? keyTexture : keyGreyedTexture);
 
         int checkmarkSize = 120;
         checkmark.setSize(checkmarkSize, checkmarkSize);
@@ -162,12 +179,6 @@ public class Level1SelectorScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
-
-
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-//        shapeRenderer.end();
     }
 
     @Override
