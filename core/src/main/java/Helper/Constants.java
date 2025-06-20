@@ -53,7 +53,9 @@ public class Constants {
     public static String IconSelectorBackgroundPath = "Sprites/Menu Objects/Icon Selector/Background.png";
 
     public static String chainDecoPath = "Sprites/Deco/Chain-1.png";
-    public static String spikeDecoPath = "Sprites/Deco/Spikedeco-1.png";
+    public static String spikeDeco1Path = "Sprites/Deco/Spikedeco-1.png";
+    public static String spikeDeco2Path = "Sprites/Deco/Spikedeco-2.png";
+    public static String spikeDeco3Path = "Sprites/Deco/Spikedeco-3.png";
     public static String torchDecoPath = "Sprites/Deco/Torch-1.png";
 
     public static String backgroundMusicPath = "Sounds/Menu/MenuMusic.mp3";

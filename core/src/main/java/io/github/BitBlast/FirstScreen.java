@@ -139,6 +139,24 @@ public class FirstScreen implements Screen {
                 case "block":
                     blockList.add(new Block(Constants.blockSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
+                case "segmented-block1":
+                    blockList.add(new Block(Constants.block1SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "segmented-block2":
+                    blockList.add(new Block(Constants.block2SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "segmented-block3":
+                    blockList.add(new Block(Constants.block3SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "segmented-block4":
+                    blockList.add(new Block(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "segmented-block5":
+                    blockList.add(new Block(Constants.block5SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "segmented-block6":
+                    blockList.add(new Block(Constants.block6SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
                 case "slab":
                     blockList.add(new Block(Constants.slabSkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight/2));
                     break;
@@ -151,8 +169,14 @@ public class FirstScreen implements Screen {
                 case "chain":
                     decorationList.add(new Decoration(Constants.chainDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
                     break;
-                case "spikedeco":
-                    decorationList.add(new Decoration(Constants.spikeDecoPath, x, y, 3*Constants.oneBlockWidth, Constants.oneBlockHeight));
+                case "spikedeco1":
+                    decorationList.add(new Decoration(Constants.spikeDeco1Path, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "spikedeco2":
+                    decorationList.add(new Decoration(Constants.spikeDeco2Path, x, y, 2*Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    break;
+                case "spikedeco3":
+                    decorationList.add(new Decoration(Constants.spikeDeco3Path, x, y, 3*Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "torch":
                     decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
