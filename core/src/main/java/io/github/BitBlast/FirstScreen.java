@@ -155,7 +155,7 @@ public class FirstScreen implements Screen {
                     decorationList.add(new Decoration(Constants.spikeDecoPath, x, y, 3*Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "torch":
-                    decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 1.5f*Constants.oneBlockHeight));
+                    decorationList.add(new Decoration(Constants.torchDecoPath, x, y, Constants.oneBlockWidth, 2*Constants.oneBlockHeight));
                     break;
             }
         }
@@ -178,7 +178,7 @@ public class FirstScreen implements Screen {
         generateLevel("Sprites/UltimateDestruction.json");
 
         MusicManager.rewind();
-        MusicManager.load(Constants.ultimateDestructionPath, false);
+        MusicManager.load(Constants.chaozAirflowPath, false);
         MusicManager.setVolume(1.0f);
         MusicManager.play();
     }
