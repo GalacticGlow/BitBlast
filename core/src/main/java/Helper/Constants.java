@@ -90,6 +90,10 @@ public class Constants {
 
     public static int difficultyFaceSize = 150;
 
+    public static int editorTestOffsetX = 0;
+    public static int editorTestOffsetY = 0;
+
+
     public static void init(){
         oneBlockHeight = Gdx.graphics.getWidth()/worldWidth;
         oneBlockWidth = oneBlockHeight;

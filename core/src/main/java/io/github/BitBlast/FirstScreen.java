@@ -44,7 +44,7 @@ public class FirstScreen implements Screen {
     public Map allColors = Map.of("BLUE", Color.BLUE, "YELLOW", Color.YELLOW,
         "GREEN", Color.GREEN, "ORANGE", Color.ORANGE,
         "RED", Color.RED, "WHITE", Color.WHITE,
-        "BLACK", Color.BLACK, "PINK", new Color(252 ,19, 192, 1));
+        "BLACK", Color.BLACK, "MAGENTA", Color.MAGENTA, "PINK", Color.PINK, "PURPLE", Color.PURPLE);
 
     public ArrayList<Spike> spikeList = new ArrayList<>();
     public ArrayList<Block> blockList = new ArrayList<>();
@@ -129,8 +129,8 @@ public class FirstScreen implements Screen {
 
         for (JsonValue item = layout.child; item != null; item = item.next) {
             String type = item.getString("type");
-            float x = item.getFloat("x")*Constants.oneBlockHeight;
-            float y = item.getFloat("y")*Constants.oneBlockHeight + Constants.startY;
+            float x = item.getFloat("x")*Constants.oneBlockHeight + Constants.editorTestOffsetX*Constants.oneBlockHeight;
+            float y = item.getFloat("y")*Constants.oneBlockHeight + Constants.startY + Constants.editorTestOffsetY;
 
             switch (type){
                 case "spike":
