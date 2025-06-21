@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.math.Vector3;
@@ -67,6 +68,7 @@ public class FirstScreen implements Screen {
     private static final float UPDATE_DELTA = 1f / 240f; // 60 updates per second
 
     public ArrayList<Key> curKeys;
+    public ArrayList<Key> allKeys;
 
     public Vector3 deathCameraPosition = new Vector3();
 
@@ -79,6 +81,35 @@ public class FirstScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
         this.curLevel = curLevel;
         this.curKeys = new ArrayList();
+        this.allKeys = new ArrayList();
+    }
+
+        FileHandle file = Gdx.files.internal(Constants.playerDataPath);
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(file);
+
+    public void saveKeys(){
+        JsonValue keysArray = base.get(curLevel + "_keys");
+        boolean[] json_keys = new boolean[3];
+
+        for (int i = 0; i < keysArray.size; i++) {
+            JsonValue keyObj = keysArray.get(i);
+            json_keys[i] = keyObj.child().asBoolean();
+        }
+
+        for (int i = 0; i < keysArray.size; i++) {
+            JsonValue keyObj = keysArray.get(i);
+            JsonValue keyEntry = keyObj.child();
+
+            boolean previouslyCollected = keyEntry.asBoolean();
+            boolean collectedNow = curKeys.get(i) == null;
+
+            keyEntry.set(Boolean.toString(previouslyCollected || collectedNow));
+        }
+
+        Json json = new Json();
+        String newContent = json.prettyPrint(base);
+        file.writeString(newContent, false);
     }
 
     public void generateLevel(String fileName) {
@@ -181,6 +212,7 @@ public class FirstScreen implements Screen {
                     break;
                 case "key":
                     curKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    allKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
             }
         }
@@ -304,9 +336,25 @@ public class FirstScreen implements Screen {
 
             accumulator -= UPDATE_DELTA;
         }
-//        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-//            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, FirstScreen.this, 1f);
-//        }
+        /*
+        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) { //я тут трохи похімічив Дмитре, і тепер коли я виходжу з рівня і заходжу назад зявляється лише екран паузи, сорі
+            ScreenType screen;
+            switch (curLevel){
+                case "ud":
+                    screen = ScreenType.LEVEL1_SELECT;
+                    break;
+                case "ed":
+                    screen = ScreenType.LEVEL2_SELECT;
+                    break;
+                case "ca":
+                    screen = ScreenType.LEVEL3_SELECT;
+                    break;
+                default:
+                    screen = ScreenType.LEVEL1_SELECT;
+            }
+            ScreenManager.getInstance().setScreenWithFade(screen, FirstScreen.this, 1f);
+        }
+         */
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
             paused = true;
@@ -434,6 +482,7 @@ public class FirstScreen implements Screen {
         player.getSprite().setRotation(0);
         transitionTimer = 0f;
         colorIndex = 0;
+        curKeys = new ArrayList(allKeys);
         currentColor = new Color((Color) allColors.get(levelColors[colorIndex]));
         targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
 
