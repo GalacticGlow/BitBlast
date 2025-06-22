@@ -223,7 +223,7 @@ public class FirstScreen implements Screen {
         Gdx.input.setInputProcessor(null);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (player == null) {
-            this.player = new Player(Constants.playerSkin3Path, Constants.startX, Constants.startY);
+            this.player = new Player(Constants.playerSkin1Path, Constants.startX, Constants.startY);
         }
         baseY = Constants.startY;
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
@@ -232,10 +232,10 @@ public class FirstScreen implements Screen {
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
-        generateLevel("Sprites/ChaozAirflow.json");
+        generateLevel("Sprites/UltimateDestruction.json");
 
         MusicManager.rewind();
-        MusicManager.load(Constants.chaozAirflowPath, false);
+        MusicManager.load(Constants.ultimateDestructionPath, false);
         MusicManager.setVolume(1.0f);
         MusicManager.play();
     }

@@ -98,7 +98,7 @@ public class Level3SelectorScreen implements Screen {
                 float realY = Gdx.graphics.getHeight() - screenY;
                 if (clickableZone.contains(screenX, realY)) {
                     System.out.println("Zone was clicked");
-                    ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level3SelectorScreen.this, 2f);
+                    ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level3SelectorScreen.this, 0.5f);
                 }
                 return false;
             }
@@ -138,15 +138,11 @@ public class Level3SelectorScreen implements Screen {
         arrowLeft.setPosition(clickableZone.x - 195, clickableZone.y + 70);
         arrowLeft.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level3SelectorScreen.this, 1f);
+                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level3SelectorScreen.this, 0.5f);
             }
         });
 
         stage.addActor(arrowLeft);
-
-        MusicManager.load(Constants.chaozAirflowPath, true);
-        MusicManager.play();
-        MusicManager.setVolume(0.5f);
     }
 
     @Override
@@ -154,7 +150,7 @@ public class Level3SelectorScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 1.5f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 0.75f);
         }
 
         batch.begin();
@@ -181,10 +177,7 @@ public class Level3SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-//        shapeRenderer.end();
+        // Малювання клікабельної зони як рамки (виділення)
     }
 
     @Override
