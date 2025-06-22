@@ -232,7 +232,7 @@ public class FirstScreen implements Screen {
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
-        generateLevel("Sprites/UltimateDestruction.json");
+        generateLevel("Sprites/ChaozAirflow.json");
 
         MusicManager.rewind();
         MusicManager.load(Constants.chaozAirflowPath, false);

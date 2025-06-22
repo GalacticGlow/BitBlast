@@ -90,7 +90,7 @@ public class Constants {
 
     public static int difficultyFaceSize = 150;
 
-    public static int editorTestOffsetX = 0;
+    public static int editorTestOffsetX = -351;
     public static int editorTestOffsetY = 0;
 
 

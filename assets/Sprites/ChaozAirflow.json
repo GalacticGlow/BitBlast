@@ -1,5 +1,5 @@
 {
-  "level_name" : "Ultimate Destruction",
+  "level_name" : "Chaoz Airflow",
   "completed" : "no",
   "colors" : ["RED", "ORANGE", "YELLOW", "RED", "MAGENTA", "PINK", "PURPLE", "MAGENTA", "BLACK", "GREEN", "YELLOW"],
   "color_trigger_interval" : 57,
@@ -952,6 +952,8 @@
 
     {"type": "spikefloor", "x": 384, "y": 0},
     {"type": "spikefloor", "x": 385, "y": 0},
+    {"type": "spikedeco2", "x": 384, "y": 0},
+
 
     {"type": "block", "x": 386, "y": 0},
     {"type": "block", "x": 386, "y": 1},
@@ -1067,6 +1069,8 @@
     {"type": "slab", "x": 409, "y": 8},
     {"type": "orb", "x": 415, "y": 5},
     {"type": "orb", "x": 420, "y": 3},
+
+    {"type": "key", "x": 421, "y": 1},
     {"type": "orb", "x": 425, "y": 3},
 
     {"type": "spikefloor", "x": 425, "y": 0},
@@ -1120,18 +1124,21 @@
     {"type": "spike", "x": 486, "y": 0},
     {"type": "spike", "x": 487, "y": 0},
 
-    {"type": "block", "x": 482, "y": 4},
-    {"type": "block", "x": 483, "y": 4},
-    {"type": "block", "x": 484, "y": 4},
-    {"type": "block", "x": 485, "y": 4},
-    {"type": "block", "x": 486, "y": 4},
-    {"type": "slab", "x": 482, "y": 5},
-    {"type": "slab", "x": 483, "y": 5},
-    {"type": "slab", "x": 484, "y": 5},
-    {"type": "slab", "x": 485, "y": 5},
-    {"type": "slab", "x": 486, "y": 5},
-    {"type": "spike", "x": 485, "y": 5.5},
-    {"type": "spike", "x": 486, "y": 5.5},
+    {"type": "block", "x": 482, "y": 3.5},
+    {"type": "block", "x": 483, "y": 3.5},
+    {"type": "block", "x": 484, "y": 3.5},
+    {"type": "block", "x": 485, "y": 3.5},
+    {"type": "block", "x": 486, "y": 3.5},
+    {"type": "slab", "x": 482, "y": 4.5},
+    {"type": "slab", "x": 483, "y": 4.5},
+
+    {"type": "key", "x": 483, "y": 5.2},
+
+    {"type": "slab", "x": 484, "y": 4.5},
+    {"type": "slab", "x": 485, "y": 4.5},
+    {"type": "slab", "x": 486, "y": 4.5},
+    {"type": "spike", "x": 485, "y": 5},
+    {"type": "spike", "x": 486, "y": 5},
 
     {"type": "halfspike", "x": 491, "y": 0},
     {"type": "halfspike", "x": 492, "y": 0},
