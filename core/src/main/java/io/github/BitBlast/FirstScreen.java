@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.math.Vector3;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class FirstScreen implements Screen {
     private boolean redFlashActive = false;
     private float redFlashTimer = 0.7f;
     private BitmapFont font;
+    private BitmapFont fontPercentage;
 
     public Map allColors = Map.of("BLUE", Color.BLUE, "YELLOW", Color.YELLOW,
         "GREEN", Color.GREEN, "ORANGE", Color.ORANGE,
@@ -73,6 +76,9 @@ public class FirstScreen implements Screen {
     public Vector3 deathCameraPosition = new Vector3();
 
     private int lastColorIndex = -1;
+
+    public float maxX = 0;
+    public float curPercentage = 0f;
 
     public FirstScreen(Main game, OrthographicCamera camera, String curLevel) {
         this.game = game;
@@ -131,6 +137,8 @@ public class FirstScreen implements Screen {
             String type = item.getString("type");
             float x = item.getFloat("x")*Constants.oneBlockHeight + Constants.editorTestOffsetX*Constants.oneBlockHeight;
             float y = item.getFloat("y")*Constants.oneBlockHeight + Constants.startY + Constants.editorTestOffsetY;
+
+            maxX = 0;
 
             switch (type){
                 case "spike":
@@ -215,6 +223,9 @@ public class FirstScreen implements Screen {
                     allKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
             }
+            if (x > maxX){
+                maxX = x;
+            }
         }
     }
 
@@ -229,6 +240,10 @@ public class FirstScreen implements Screen {
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
         font.setColor(Color.WHITE);
         font.getData().setScale(3);
+
+        fontPercentage = new BitmapFont(Gdx.files.internal("font.fnt"), false);
+        fontPercentage.setColor(Color.WHITE);
+        fontPercentage.getData().setScale(1);
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
@@ -327,8 +342,8 @@ public class FirstScreen implements Screen {
 
         while (accumulator >= UPDATE_DELTA) {
             if (!player.isAlive()) {
-                deathCameraPosition.set(camera.position);
-                die();
+                //deathCameraPosition.set(camera.position);
+                //die();
             }
 
             update(UPDATE_DELTA);
@@ -413,6 +428,23 @@ public class FirstScreen implements Screen {
         }
         batch.end();
 
+        float thresholdX = camera.viewportWidth * 0.3f;
+        float percentX = 9*Constants.oneBlockHeight;
+
+        if (player.getX() > thresholdX) {
+            percentX = player.getX() + 3*Constants.oneBlockWidth;
+        }
+
+        Vector3 screenPos = new Vector3(0, 100, 0);
+        camera.unproject(screenPos);
+        float percentY = screenPos.y;
+
+        batch.begin();
+        GlyphLayout layout = new GlyphLayout(fontPercentage, String.valueOf(curPercentage) + '%');
+        fontPercentage.draw(batch, layout, percentX, percentY);
+        batch.end();
+        curPercentage = new BigDecimal((player.getX()/maxX) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+
         if (redFlashActive) {
             redFlashTimer -= delta;
 
@@ -424,10 +456,10 @@ public class FirstScreen implements Screen {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             font.setColor(Color.WHITE);
-            GlyphLayout layout = new GlyphLayout(font, "YOU ARE DEAD!");
-            font.draw(batch, layout,
-                (Gdx.graphics.getWidth() - layout.width) / 2,
-                (Gdx.graphics.getHeight() + layout.height) / 2
+            GlyphLayout layoutDead = new GlyphLayout(font, "YOU ARE DEAD!");
+            font.draw(batch, layoutDead,
+                (Gdx.graphics.getWidth() - layoutDead.width) / 2,
+                (Gdx.graphics.getHeight() + layoutDead.height) / 2
             );
             batch.end();
 
@@ -441,10 +473,10 @@ public class FirstScreen implements Screen {
     private void drawPauseScreen() {
         batch.begin();
         font.setColor(Color.BLACK);
-        GlyphLayout layout = new GlyphLayout(font, "PAUSE");
-        font.draw(batch, layout,
-            (player.getX() + layout.width) / 2,
-            (player.getY() + layout.height)
+        GlyphLayout layoutPause = new GlyphLayout(font, "PAUSE");
+        font.draw(batch, layoutPause,
+            (player.getX() + layoutPause.width) / 2,
+            (player.getY() + layoutPause.height)
         );
         batch.end();
     }
@@ -467,7 +499,7 @@ public class FirstScreen implements Screen {
     public void checkForCollisions() {
         for (Spike spike : spikeList) {
             if (player.getHitBox().overlaps(spike.getHitBox())) {
-                player.alive = false;
+                //player.alive = false;
             }
         }
     }
@@ -520,6 +552,7 @@ public class FirstScreen implements Screen {
             camera.position.x = targetX;
             camera.position.y += (targetY - camera.position.y) * smoothingY;
         }
+
         camera.update();
     }
 

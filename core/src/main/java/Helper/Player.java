@@ -132,7 +132,7 @@ public class Player{
                     break;
                 }
                 else {
-                    alive = false;
+                    //alive = false;
                 }
             }
         }
