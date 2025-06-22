@@ -98,7 +98,7 @@ public class Level2SelectorScreen implements Screen {
                 float realY = Gdx.graphics.getHeight() - screenY;
                 if (clickableZone.contains(screenX, realY)) {
                     System.out.println("Zone was clicked");
-                    ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level2SelectorScreen.this, 2f);
+                    ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level2SelectorScreen.this, 1f);
                 }
                 return false;
             }
@@ -140,7 +140,7 @@ public class Level2SelectorScreen implements Screen {
         arrowRight.setPosition(clickableZone.x + clickableZone.width + 30, clickableZone.y + 70);
         arrowRight.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL3_SELECT, Level2SelectorScreen.this, 1f);
+                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL3_SELECT, Level2SelectorScreen.this, 0.5f);
             }
         });
 
@@ -152,16 +152,12 @@ public class Level2SelectorScreen implements Screen {
         arrowLeft.setPosition(clickableZone.x - 195, clickableZone.y + 70);
         arrowLeft.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL1_SELECT, Level2SelectorScreen.this, 1f);
+                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL1_SELECT, Level2SelectorScreen.this, 0.5f);
             }
         });
 
         stage.addActor(arrowRight);
         stage.addActor(arrowLeft);
-
-        MusicManager.load(Constants.eurodancerPath, true);
-        MusicManager.play();
-        MusicManager.setVolume(0.5f);
     }
 
     @Override
@@ -169,7 +165,7 @@ public class Level2SelectorScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 1.5f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 0.75f);
         }
 
         batch.begin();
@@ -196,10 +192,7 @@ public class Level2SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-//        shapeRenderer.end();
+        // Малювання клікабельної зони як рамки (виділення)
     }
 
     @Override
