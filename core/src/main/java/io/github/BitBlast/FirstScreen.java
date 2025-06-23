@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -29,6 +30,7 @@ import com.badlogic.gdx.math.Vector3;
 import java.math.BigDecimal;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -61,7 +63,7 @@ public class FirstScreen implements Screen {
     private Texture backgroundTexture;
     private Texture groundTexture;
 
-    private int inputIgnoreFrames = 5;
+    private int inputIgnoreFrames = 0;
 
     private int musicIgnoreFrames = 15;
     private boolean musicStarted = false;
@@ -110,6 +112,7 @@ public class FirstScreen implements Screen {
     private boolean showVictoryWindow = false;
     private Image victoryWindow;
     private BitmapFont levelCompleteLabel;
+    private BitmapFont pauseLabelFont;
     private Texture keyTexture;
     private Texture keyGreyedTexture;
     private Image key1Complete;
@@ -178,11 +181,6 @@ public class FirstScreen implements Screen {
     }
 
     public void generateLevel(String fileName) {
-        curKeys.clear();
-        allKeys.clear();
-        System.out.println("generateLevel CALLED");
-        Thread.dumpStack();
-
         JsonReader jsonReader = new JsonReader();
         JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
 
@@ -197,12 +195,12 @@ public class FirstScreen implements Screen {
         currentColor = new Color((Color) allColors.get(levelColors[colorIndex])); // make a copy
         targetColor = new Color((Color) allColors.get(levelColors[colorIndex]));
 
+        maxX = 0;
+
         for (JsonValue item = layout.child; item != null; item = item.next) {
             String type = item.getString("type");
             float x = item.getFloat("x")*Constants.oneBlockHeight + Constants.editorTestOffsetX*Constants.oneBlockHeight;
             float y = item.getFloat("y")*Constants.oneBlockHeight + Constants.startY + Constants.editorTestOffsetY;
-
-            maxX = 0;
 
             switch (type){
                 case "spike":
@@ -250,7 +248,7 @@ public class FirstScreen implements Screen {
                     blockList.add(new Block(Constants.block3SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block4":
-                    blockList.add(new Block(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    decorationList.add(new Decoration(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block5":
                     blockList.add(new Block(Constants.block5SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
@@ -307,15 +305,22 @@ public class FirstScreen implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (player == null) {
             this.player = new Player(iconPath, Constants.startX, Constants.startY);
+        } else {
+            this.player = null;
+            this.player = new Player(iconPath, Constants.startX, Constants.startY);
         }
         baseY = Constants.startY;
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
         font.setColor(Color.WHITE);
         font.getData().setScale(3);
 
-        fontPercentage = new BitmapFont(Gdx.files.internal("font.fnt"), false);
-        fontPercentage.setColor(Color.WHITE);
-        fontPercentage.getData().setScale(1);
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 36;
+        parameter.color = Color.WHITE;
+        parameter.borderWidth = 2;
+        parameter.borderColor = Color.BLACK;
+        fontPercentage = generator.generateFont(parameter);
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
@@ -342,6 +347,14 @@ public class FirstScreen implements Screen {
 
         initVictoryWindow();
 
+        if (curLevel.equals("ud")) {
+            MusicManager.load(Constants.ultimateDestructionPath, false);
+        } else if (curLevel.equals("ed")) {
+            MusicManager.load(Constants.eurodancerPath, false);
+        } else if (curLevel.equals("ca")) {
+            MusicManager.load(Constants.chaozAirflowPath, false);
+        }
+        MusicManager.rewind();
         MusicManager.play();
 
 //        Timer.schedule(new Timer.Task() {
@@ -382,7 +395,13 @@ public class FirstScreen implements Screen {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO
+                if (curLevel.equals("ud")) {
+                    ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL1_SELECT, FirstScreen.this, 2f);
+                } else if (curLevel.equals("ed")) {
+                    ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, FirstScreen.this, 2f);
+                } else if (curLevel.equals("ca")) {
+                    ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL3_SELECT, FirstScreen.this, 2f);
+                }
             }
         });
 
@@ -411,6 +430,13 @@ public class FirstScreen implements Screen {
         parameter.borderWidth = 2;
         parameter.borderColor = Color.BLACK;
         levelCompleteLabel = generator.generateFont(parameter);
+
+        parameter.size = 105;
+        parameter.color = Color.WHITE;
+        parameter.borderWidth = 2;
+        parameter.borderColor = Color.BLACK;
+        pauseLabelFont = generator.generateFont(parameter);
+
         generator.dispose();
 
         Label.LabelStyle style = new Label.LabelStyle();
@@ -445,9 +471,6 @@ public class FirstScreen implements Screen {
             (float) (victoryWindow.getY() + victoryWindow.getHeight() - victoryWindow.getHeight() / 1.4)
         );
 
-        // Міняє текстуру ключа
-        // key1Complete.setDrawable(new TextureRegionDrawable(new TextureRegion(keyTexture)));
-
         victoryWindowStage.addActor(victoryWindow);
         victoryWindowStage.addActor(replayButton);
         victoryWindowStage.addActor(exitButton);
@@ -455,6 +478,8 @@ public class FirstScreen implements Screen {
         victoryWindowStage.addActor(key1Complete);
         victoryWindowStage.addActor(key2Complete);
         victoryWindowStage.addActor(key3Complete);
+
+        paused = false;
     }
 
     public void updateKeys(){
@@ -552,6 +577,9 @@ public class FirstScreen implements Screen {
     public void render(float delta) {
         if (player == null || backgroundTexture == null || groundTexture == null) return;
 
+        //showVictoryWindow = true;
+
+
         if (delta > 0.25f) delta = 0.25f;
         accumulator += delta;
 
@@ -572,6 +600,25 @@ public class FirstScreen implements Screen {
             accumulator -= UPDATE_DELTA;
         }
 
+        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) { //я тут трохи похімічив Дмитре, і тепер коли я виходжу з рівня і заходжу назад зявляється лише екран паузи, сорі
+            ScreenType screen;
+            switch (curLevel){
+                case "ud":
+                    screen = ScreenType.LEVEL1_SELECT;
+                    break;
+                case "ed":
+                    screen = ScreenType.LEVEL2_SELECT;
+                    break;
+                case "ca":
+                    screen = ScreenType.LEVEL3_SELECT;
+                    break;
+                default:
+                    screen = ScreenType.LEVEL1_SELECT;
+            }
+            ScreenManager.getInstance().setScreenWithFade(screen, FirstScreen.this, 1f);
+        }
+
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
             paused = true;
             MusicManager.pause();
@@ -581,7 +628,7 @@ public class FirstScreen implements Screen {
         }
 
         if (paused) {
-            drawPauseScreen();
+            drawPauseScreen(delta);
             return;
         }
 
@@ -636,7 +683,7 @@ public class FirstScreen implements Screen {
             percentX = player.getX() + 3*Constants.oneBlockWidth;
         }
 
-        Vector3 screenPos = new Vector3(0, 100, 0);
+        Vector3 screenPos = new Vector3(0, 50, 0);
         camera.unproject(screenPos);
         float percentY = screenPos.y;
 
@@ -644,8 +691,12 @@ public class FirstScreen implements Screen {
         GlyphLayout layout = new GlyphLayout(fontPercentage, String.valueOf(curPercentage) + '%');
         fontPercentage.draw(batch, layout, percentX, percentY);
         batch.end();
-        curPercentage = new BigDecimal((player.getX()/maxX) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+        curPercentage = (player.getX()/maxX) * 100 > 0 ? new BigDecimal((player.getX()/maxX) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue() : 0;
 
+        if (curPercentage >= 100 && !showVictoryWindow) {
+            showVictoryWindow = true;
+            Gdx.input.setInputProcessor(victoryWindowStage);
+        }
         if(curPercentage >= 100) {
             System.out.println(curKeys);
             victoryWindowStage.act(delta);
@@ -691,15 +742,22 @@ public class FirstScreen implements Screen {
         }
     }
 
-    private void drawPauseScreen() {
-        batch.begin();
-        font.setColor(Color.BLACK);
-        GlyphLayout layoutPause = new GlyphLayout(font, "PAUSE");
-        font.draw(batch, layoutPause,
-            (player.getX() + layoutPause.width) / 2,
-            (player.getY() + layoutPause.height)
+    private void drawPauseScreen(float delta) {
+        Stage pauseStage = new Stage(new ScreenViewport());
+
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = pauseLabelFont;
+        style.fontColor = Color.WHITE;
+        Label pauseLabel = new Label("PAUSE", style);
+        pauseLabel.setPosition(
+            (Gdx.graphics.getWidth() - pauseLabel.getWidth()) / 2,
+            (Gdx.graphics.getHeight() + pauseLabel.getHeight()) / 2
         );
-        batch.end();
+
+        pauseStage.addActor(pauseLabel);
+
+        pauseStage.act(delta);
+        pauseStage.draw();
     }
 
     public void update(float delta) {

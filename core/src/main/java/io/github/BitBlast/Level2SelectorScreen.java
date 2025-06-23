@@ -89,7 +89,11 @@ public class Level2SelectorScreen implements Screen {
 
 
         // Clickable zone to start game
-        clickableZone = new Rectangle(205, 390, 1515, 430); // x, y, width, height
+        clickableZone = new Rectangle(
+            (float) (Gdx.graphics.getWidth() / 9.5),
+            (float) (Gdx.graphics.getHeight() / 2.6),
+            (float) (Gdx.graphics.getWidth() / 1.267),
+            (float) (Gdx.graphics.getHeight() / 2.37));
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InputAdapter() {
@@ -202,10 +206,10 @@ public class Level2SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-//        shapeRenderer.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
+        shapeRenderer.end();
     }
 
     @Override
