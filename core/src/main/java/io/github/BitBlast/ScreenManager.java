@@ -10,7 +10,7 @@ public class ScreenManager {
     private Main game;
     private final Map<ScreenType, Screen> screens = new HashMap<>();
 
-    public static String levelId;
+    public String levelId;
 
     private ScreenManager() {}
 
@@ -54,6 +54,16 @@ public class ScreenManager {
                 throw new IllegalArgumentException("Unknown screen type: " + type);
         }
 
+    }
+
+    public void setScreenWithFadeLevel(ScreenType type, Screen fromScreen, float duration, String levelId) {
+        this.levelId = levelId;
+        Screen toScreen = screens.get(type);
+        if (toScreen == null) {
+            toScreen = createScreen(type);
+            screens.put(type, toScreen);
+        }
+        game.setScreen(new FadeTransitionScreen(game, fromScreen, toScreen, duration));
     }
 
     public void setScreenWithFade(ScreenType type, Screen fromScreen, float duration) {

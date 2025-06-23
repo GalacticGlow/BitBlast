@@ -172,8 +172,6 @@ public class FirstScreen implements Screen {
             gson.toJson(root, writer);
             writer.flush();
             writer.close();
-
-            System.out.println("✅ Keys saved successfully with Gson");
         }
         catch (Exception e) {
             e.printStackTrace();

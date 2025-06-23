@@ -21,8 +21,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import java.io.File;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import static io.github.BitBlast.ScreenManager.levelId;
-
 public class Level1SelectorScreen implements Screen {
 
     private Main game;
@@ -105,8 +103,7 @@ public class Level1SelectorScreen implements Screen {
                 float realY = Gdx.graphics.getHeight() - screenY;
                 if (clickableZone.contains(screenX, realY)) {
                     System.out.println("Zone was clicked");
-                    levelId = "ud";
-                    ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level1SelectorScreen.this, 2f);
+                    ScreenManager.getInstance().setScreenWithFadeLevel(ScreenType.FIRST_LEVEL, Level1SelectorScreen.this, 2f, "ud");
                 }
                 return false;
             }
