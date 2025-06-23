@@ -277,7 +277,18 @@ public class FirstScreen implements Screen {
 
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
-        generateLevel("Sprites/UltimateDestruction.json");
+
+        switch (curLevel) {
+            case "ud":
+                generateLevel("Sprites/UltimateDestruction.json");
+                break;
+            case "ed":
+                generateLevel("Sprites/Eurodancer.json");
+                break;
+            case "ca":
+                generateLevel("Sprites/ChaozAirflow.json");
+                break;
+        }
 
         MusicManager.stop();
 
@@ -403,7 +414,7 @@ public class FirstScreen implements Screen {
         JsonReader jsonReader = new JsonReader();
         JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
 
-        JsonValue keysArray = base.get("ed_keys");
+        JsonValue keysArray = base.get(curLevel + "_keys");
         json_keys = new boolean[3];
 
         for (int i = 0; i < keysArray.size; i++) {

@@ -10,6 +10,8 @@ public class ScreenManager {
     private Main game;
     private final Map<ScreenType, Screen> screens = new HashMap<>();
 
+    public static String levelId;
+
     private ScreenManager() {}
 
     public static ScreenManager getInstance() {
@@ -50,7 +52,7 @@ public class ScreenManager {
             case LEVEL3_SELECT:
                 return new Level3SelectorScreen(game, camera);
             case FIRST_LEVEL:
-                return new FirstScreen(game, camera, "ud");
+                return new FirstScreen(game, camera, levelId);
             default:
                 throw new IllegalArgumentException("Unknown screen type: " + type);
         }

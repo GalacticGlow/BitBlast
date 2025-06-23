@@ -97,6 +97,7 @@ public class Level1SelectorScreen implements Screen {
                 float realY = Gdx.graphics.getHeight() - screenY;
                 if (clickableZone.contains(screenX, realY)) {
                     System.out.println("Zone was clicked");
+                    ScreenManager.levelId = "ud";
                     ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level1SelectorScreen.this, 2f);
                 }
                 return false;

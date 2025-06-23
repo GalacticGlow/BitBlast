@@ -92,7 +92,7 @@ public class SetingsScreen implements Screen {
         );
         secretButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                // TODO JOJOOOOOOOOOOOOOO
+                MusicManager.jojoMusicEnabled = !MusicManager.jojoMusicEnabled;
             }
         });
 
