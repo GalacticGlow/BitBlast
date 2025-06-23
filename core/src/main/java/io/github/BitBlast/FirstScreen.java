@@ -275,6 +275,7 @@ public class FirstScreen implements Screen {
         allKeys = new ArrayList<>();
         orbList = new ArrayList<>();
         jumpPadList = new ArrayList<>();
+        colors = new ArrayList<>();
 
 //        if (this.player != null) {
 //            player.updatePosition(Constants.startX, Constants.startY);
