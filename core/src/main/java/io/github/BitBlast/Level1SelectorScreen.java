@@ -147,7 +147,7 @@ public class Level1SelectorScreen implements Screen {
         arrowRight.setPosition(clickableZone.x + clickableZone.width + 30, clickableZone.y + 70);
         arrowRight.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level1SelectorScreen.this, 1f);
+                ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level1SelectorScreen.this, 0.5f);
             }
         });
         stage.addActor(arrowRight);
@@ -194,7 +194,7 @@ public class Level1SelectorScreen implements Screen {
         shapeRenderer.end();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, this, 1f);
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, this, 0.5f);
         }
     }
 

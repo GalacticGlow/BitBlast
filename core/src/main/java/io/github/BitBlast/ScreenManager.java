@@ -28,10 +28,7 @@ public class ScreenManager {
     public void setScreen(ScreenType type) {
         Screen screen = screens.get(type);
 
-        if (screen == null) {
-            screen = createScreen(type);
-            screens.put(type, screen);
-        }
+        screen = createScreen(type);
         game.setScreen(screen);
     }
 

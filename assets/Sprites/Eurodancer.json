@@ -462,7 +462,7 @@
 
     {"type": "block", "x": 227, "y": 0},
     {"type": "block", "x": 227, "y": 1},
-    {"type": "torch", "x": 227, "y": 2
+    {"type": "torch", "x": 227, "y": 2},
 
     {"type": "spike", "x": 228, "y": 0},
     {"type": "spike", "x": 229, "y": 0},
@@ -683,7 +683,7 @@
     {"type": "block", "x": 366, "y": 1},
     {"type": "block", "x": 366, "y": 2},
     {"type": "block", "x": 366, "y": 3},
-    {"type": "torch", "x": 366, "y": 4}
+    {"type": "torch", "x": 366, "y": 4},
 
     {"type": "spikefloor", "x": 367, "y": 0},
     {"type": "spikefloor", "x": 368, "y": 0},
@@ -745,7 +745,7 @@
 
     {"type": "block", "x": 398, "y": 0},
     {"type": "block", "x": 398, "y": 1},
-    {"type": "torch", "x": 398, "y": 2}
+    {"type": "torch", "x": 398, "y": 2},
 
     {"type": "slab", "x": 405, "y": 1},
 
@@ -786,7 +786,7 @@
     {"type": "torch", "x": 457, "y": 2.5},
 
     {"type": "slab", "x": 462, "y": 2},
-    {"type": "slab", "x": 463, "y": 2}
+    {"type": "slab", "x": 463, "y": 2},
 
     {"type": "spike", "x": 403, "y": 0},
     {"type": "spike", "x": 404, "y": 0},
@@ -929,7 +929,7 @@
     {"type": "slab", "x": 497, "y": 1},
 
     {"type": "spike", "x": 498, "y": 0},
-    {"type": "spike", "x": 499, "y": 0}
+    {"type": "spike", "x": 499, "y": 0},
 
 
     {"type": "spikefloor", "x": 485, "y": 0},
