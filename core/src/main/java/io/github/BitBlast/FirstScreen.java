@@ -213,7 +213,7 @@ public class FirstScreen implements Screen {
                     blockList.add(new Block(Constants.block3SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block4":
-                    blockList.add(new Block(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    decorationList.add(new Decoration(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block5":
                     blockList.add(new Block(Constants.block5SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
