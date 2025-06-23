@@ -4,6 +4,10 @@
   "colors" : ["BLUE", "MAGENTA", "PURPLE", "PINK", "RED", "BLACK", "BLUE", "GREEN"],
   "color_trigger_interval" : 71,
   "layout" : [
-    {"type": "spike", "x": 18, "y": 0}
+    {"type": "spike", "x": 18, "y": 0},
+
+    {"type": "key", "x": 23, "y": 0},
+    {"type": "key", "x": 30, "y": 0},
+    {"type": "key", "x": 37, "y": 0}
   ]
 }

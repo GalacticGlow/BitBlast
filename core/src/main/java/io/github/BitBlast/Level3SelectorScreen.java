@@ -56,7 +56,7 @@ public class Level3SelectorScreen implements Screen {
 
     public void updateKeys(){
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(Constants.playerDataPath));
 
         JsonValue keysArray = base.get("ca_keys");
         ca_keys = new boolean[3];
@@ -145,7 +145,7 @@ public class Level3SelectorScreen implements Screen {
 
         stage.addActor(arrowLeft);
 
-        MusicManager.load(Constants.chaozAirflowPath, true);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCAMenuMusicPath : Constants.chaozAirflowPath, false);
         MusicManager.setVolume(0.5f);
         MusicManager.play();
     }

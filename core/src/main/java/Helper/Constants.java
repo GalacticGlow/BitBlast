@@ -3,7 +3,7 @@ package Helper;
 import com.badlogic.gdx.Gdx;
 
 public class Constants {
-    public static String playerDataPath = "Sprites/player_data.json";
+    public static String playerDataPath = "C:\\IntelliJ Java BS\\BitBlast\\assets\\Sprites\\player_data.json";
 
     public static String playerSkin1Path = "Sprites/Icons/Cubes/Cube-1.png";
     public static String playerSkin2Path = "Sprites/Icons/Cubes/Cube-2.png";
@@ -62,9 +62,16 @@ public class Constants {
     public static String torchDecoPath = "Sprites/Deco/Torch-1.png";
 
     public static String backgroundMusicPath = "Sounds/Menu/MenuMusic.mp3";
+    public static String jojoBackgroundMusicPath = "Sounds/Menu/Pillarmen theme main menu.mp3";
     public static String ultimateDestructionPath = "Sounds/Music/1-ultimate-destruction.mp3";
+    public static String jojoUDMenuMusicPath = "Sounds/Music/Josuke Theme Menu.mp3";
+    public static String jojoUDLevelMusicPath = "Sounds/Music/Josuke Theme Level.mp3";
     public static String eurodancerPath = "Sounds/Music/2-eurodancer.mp3";
+    public static String jojoEDMenuMusicPath = "Sounds/Music/Il Vento Doro Menu.mp3";
+    public static String jojoEDLevelMusicPath = "Sounds/Music/Il Vento Doro Level.mp3";
     public static String chaozAirflowPath = "Sounds/Music/3-chaoz-airflow.mp3";
+    public static String jojoCAMenuMusicPath = "Sounds/Music/Jolyne Theme Menu.mp3";
+    public static String jojoCALevelMusicPath = "Sounds/Music/Jolyne Theme Level.mp3";
 
     public static String levelCompleteOverlayPath = "Sprites/Menu Objects/Level Complete/Level-Complete-Overlay.png";
     public static String menuButtonPath = "Sprites/Menu Objects/Level Complete/Menu-Button.png";

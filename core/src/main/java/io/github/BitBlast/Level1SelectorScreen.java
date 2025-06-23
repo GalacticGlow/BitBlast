@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import java.io.File;
 
 public class Level1SelectorScreen implements Screen {
 
@@ -57,7 +58,7 @@ public class Level1SelectorScreen implements Screen {
 
     public void updateKeys(){
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(Constants.playerDataPath));
 
         JsonValue keysArray = base.get("ud_keys");
         ud_keys = new boolean[3];
@@ -145,7 +146,7 @@ public class Level1SelectorScreen implements Screen {
         });
         stage.addActor(arrowRight);
 
-        MusicManager.load(Constants.ultimateDestructionPath, true);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDMenuMusicPath : Constants.ultimateDestructionPath, false);
         MusicManager.play();
     }
 

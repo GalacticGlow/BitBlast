@@ -56,7 +56,7 @@ public class Level2SelectorScreen implements Screen {
 
     public void updateKeys(){
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(Constants.playerDataPath));
 
         JsonValue keysArray = base.get("ed_keys");
         ed_keys = new boolean[3];
@@ -160,7 +160,7 @@ public class Level2SelectorScreen implements Screen {
         stage.addActor(arrowRight);
         stage.addActor(arrowLeft);
 
-        MusicManager.load(Constants.eurodancerPath, true);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoEDMenuMusicPath : Constants.eurodancerPath, false);
         MusicManager.play();
     }
 

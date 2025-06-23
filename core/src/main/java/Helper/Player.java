@@ -101,9 +101,11 @@ public class Player{
             }
         }
 
-        for (Key key : curKeys) {
+        for (int i = 0; i < curKeys.size(); i++) {
+            Key key = curKeys.get(i);
             if (key != null && this.hitBox.overlaps(key.getHitBox())) {
-                curKeys.set(curKeys.indexOf(key), null);
+                curKeys.set(i, null);
+                System.out.println("Key was collected at index " + i);
             }
         }
 

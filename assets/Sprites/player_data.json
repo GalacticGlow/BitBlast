@@ -1,5 +1,5 @@
 {
-"current_icon": "2",
+"current_icon": "7",
 "percentage_ultimate_destruction": 69,
 "ud_keys": [
 	{
@@ -15,22 +15,22 @@
 "percentage_eurodancer": 69,
 "ed_keys": [
 	{
-		"ed_1": true
+		"ed_1": false
 	},
 	{
 		"ed_2": false
 	},
 	{
-		"ed_3": false
+		"ed_3": true
 	}
 ],
 "percentage_chaoz_airflow": 69,
 "ca_keys": [
 	{
-		"ca_1": false
+		"ca_1": true
 	},
 	{
-		"ca_2": false
+		"ca_2": true
 	},
 	{
 		"ca_3": true

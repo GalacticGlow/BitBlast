@@ -23,9 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.Vector3;
 
 import java.math.BigDecimal;
@@ -34,7 +32,22 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TimerTask;
 
-import com.badlogic.gdx.utils.Timer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 
 public class FirstScreen implements Screen {
@@ -104,6 +117,9 @@ public class FirstScreen implements Screen {
     private Image key3Complete;
     private boolean[] json_keys;
 
+    private boolean levelGenerated = false;
+    private boolean keysSaved = false;
+
     public float maxX = 0;
     public float curPercentage = 0f;
 
@@ -117,35 +133,56 @@ public class FirstScreen implements Screen {
         this.allKeys = new ArrayList();
     }
 
-        FileHandle file = Gdx.files.internal(Constants.playerDataPath);
-        JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(file);
+    public void saveKeysWithGson() throws Exception {
+        try {
+            System.out.println(curLevel);
+            System.out.println(curKeys);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public void saveKeys(){
-        JsonValue keysArray = base.get(curLevel + "_keys");
-        boolean[] json_keys = new boolean[3];
+            // 1. Read existing JSON file as JsonObject
+            Reader reader = new FileReader(Constants.playerDataPath);
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            reader.close();
 
-        for (int i = 0; i < keysArray.size; i++) {
-            JsonValue keyObj = keysArray.get(i);
-            json_keys[i] = keyObj.child().asBoolean();
+            // 2. Get the array for the current level's keys, e.g., "ed_keys"
+            String keysKey = curLevel + "_keys";  // e.g., "ed_keys"
+            JsonArray keysArray = root.getAsJsonArray(keysKey);
+
+            // 3. Update the keys' boolean values based on collected state
+            for (int i = 0; i < keysArray.size(); i++) {
+                JsonObject keyObj = keysArray.get(i).getAsJsonObject();
+
+                // There should be exactly one key per object, so get the key name and value
+                for (Map.Entry<String, JsonElement> entry : keyObj.entrySet()) {
+                    boolean previouslyCollected = entry.getValue().getAsBoolean();
+                    boolean collectedNow = curKeys.get(i) == null;
+
+                    System.out.println("KEY #" + i + " (" + entry.getKey() + "): previously=" + previouslyCollected + ", now=" + collectedNow);
+
+                    // Update the value to true if previously or now collected
+                    keyObj.addProperty(entry.getKey(), previouslyCollected || collectedNow);
+                }
+            }
+
+            // 4. Write the updated JSON back to file (overwrite)
+            Writer writer = new FileWriter(Constants.playerDataPath);
+            gson.toJson(root, writer);
+            writer.flush();
+            writer.close();
+
+            System.out.println("✅ Keys saved successfully with Gson");
         }
-
-        for (int i = 0; i < keysArray.size; i++) {
-            JsonValue keyObj = keysArray.get(i);
-            JsonValue keyEntry = keyObj.child();
-
-            boolean previouslyCollected = keyEntry.asBoolean();
-            boolean collectedNow = curKeys.get(i) == null;
-
-            keyEntry.set(Boolean.toString(previouslyCollected || collectedNow));
+        catch (Exception e) {
+            e.printStackTrace();
         }
-
-        Json json = new Json();
-        String newContent = json.prettyPrint(base);
-        file.writeString(newContent, false);
     }
 
     public void generateLevel(String fileName) {
+        curKeys.clear();
+        allKeys.clear();
+        System.out.println("generateLevel CALLED");
+        Thread.dumpStack();
+
         JsonReader jsonReader = new JsonReader();
         JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
 
@@ -248,6 +285,7 @@ public class FirstScreen implements Screen {
                 case "key":
                     curKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     allKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    System.out.println("Key was generated");
                     break;
             }
             if (x > maxX){
@@ -258,6 +296,10 @@ public class FirstScreen implements Screen {
 
     @Override
     public void show() {
+        FileHandle file = Gdx.files.absolute(Constants.playerDataPath);
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(file);
+
         int currIcon = base.get("current_icon").asInt();
         String iconPath = "Sprites/Icons/Cubes/Cube-" + currIcon + ".png";
 
@@ -278,23 +320,28 @@ public class FirstScreen implements Screen {
         backgroundTexture = new Texture(Constants.backdropPath); // Replace with your background texture path
         groundTexture = new Texture(Constants.groundPath);
 
-        switch (curLevel) {
-            case "ud":
-                generateLevel("Sprites/UltimateDestruction.json");
-                break;
-            case "ed":
-                generateLevel("Sprites/Eurodancer.json");
-                break;
-            case "ca":
-                generateLevel("Sprites/ChaozAirflow.json");
-                break;
+        if (!levelGenerated) {
+            switch (curLevel) {
+                case "ud":
+                    generateLevel("Sprites/UltimateDestruction.json");
+                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDLevelMusicPath : Constants.ultimateDestructionPath, false);
+                    break;
+                case "ed":
+                    generateLevel("Sprites/Eurodancer.json");
+                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoEDLevelMusicPath : Constants.eurodancerPath, false);
+                    break;
+                case "ca":
+                    generateLevel("Sprites/ChaozAirflow.json");
+                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCALevelMusicPath : Constants.chaozAirflowPath, false);
+                    break;
+            }
+            levelGenerated = true;
         }
 
         MusicManager.stop();
 
         initVictoryWindow();
 
-        MusicManager.load(Constants.eurodancerPath, false);
         MusicManager.play();
 
 //        Timer.schedule(new Timer.Task() {
@@ -412,7 +459,7 @@ public class FirstScreen implements Screen {
 
     public void updateKeys(){
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(Constants.playerDataPath));
 
         JsonValue keysArray = base.get(curLevel + "_keys");
         json_keys = new boolean[3];
@@ -505,9 +552,6 @@ public class FirstScreen implements Screen {
     public void render(float delta) {
         if (player == null || backgroundTexture == null || groundTexture == null) return;
 
-        //showVictoryWindow = true;
-
-
         if (delta > 0.25f) delta = 0.25f;
         accumulator += delta;
 
@@ -527,25 +571,6 @@ public class FirstScreen implements Screen {
 
             accumulator -= UPDATE_DELTA;
         }
-        /*
-        if (paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) { //я тут трохи похімічив Дмитре, і тепер коли я виходжу з рівня і заходжу назад зявляється лише екран паузи, сорі
-            ScreenType screen;
-            switch (curLevel){
-                case "ud":
-                    screen = ScreenType.LEVEL1_SELECT;
-                    break;
-                case "ed":
-                    screen = ScreenType.LEVEL2_SELECT;
-                    break;
-                case "ca":
-                    screen = ScreenType.LEVEL3_SELECT;
-                    break;
-                default:
-                    screen = ScreenType.LEVEL1_SELECT;
-            }
-            ScreenManager.getInstance().setScreenWithFade(screen, FirstScreen.this, 1f);
-        }
-         */
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !paused) {
             paused = true;
@@ -622,13 +647,23 @@ public class FirstScreen implements Screen {
         curPercentage = new BigDecimal((player.getX()/maxX) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 
         if(curPercentage >= 100) {
+            System.out.println(curKeys);
             victoryWindowStage.act(delta);
             victoryWindowStage.draw();
+            try {
+                saveKeysWithGson();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            keysSaved = true;
         }
 
         if (showVictoryWindow) {
+            System.out.println(curKeys);
             victoryWindowStage.act(delta);
             victoryWindowStage.draw();
+            keysSaved = true;
         }
 
         if (redFlashActive) {

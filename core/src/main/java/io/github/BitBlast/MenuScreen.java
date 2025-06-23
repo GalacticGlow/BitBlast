@@ -128,7 +128,7 @@ public class MenuScreen implements Screen {
         fontMini.setColor(Color.WHITE);
         fontMini.getData().setScale(1);
 
-        MusicManager.load(Constants.backgroundMusicPath, true);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoBackgroundMusicPath : Constants.backgroundMusicPath, true);
         MusicManager.play();
     }
 

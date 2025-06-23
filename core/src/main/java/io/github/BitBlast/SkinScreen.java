@@ -71,7 +71,7 @@ public class SkinScreen implements Screen {
     public int playerKeys = 0;
 
     Json json = new Json();
-    FileHandle file = Gdx.files.local(Constants.playerDataPath);
+    FileHandle file = Gdx.files.absolute(Constants.playerDataPath);
     JsonReader jsonReader = new JsonReader();
     JsonValue base = jsonReader.parse(file);
     private int currentIcon = base.get("current_icon").asInt();
