@@ -18,6 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import static io.github.BitBlast.ScreenManager.levelId;
 
 public class Level1SelectorScreen implements Screen {
 
@@ -51,7 +54,7 @@ public class Level1SelectorScreen implements Screen {
         this.game = game;
         this.camera = camera;
         this.batch = new SpriteBatch();
-        this.stage = new Stage();
+        this.stage = new Stage(new ScreenViewport());
         this.shapeRenderer = new ShapeRenderer();
     }
 
@@ -88,7 +91,11 @@ public class Level1SelectorScreen implements Screen {
         nameFont = generator.generateFont(parameter);
         generator.dispose();
 
-        clickableZone = new Rectangle(205, 390, 1515, 430); // x, y, width, height
+        clickableZone = new Rectangle(
+            (float) (Gdx.graphics.getWidth() / 9.5),
+            (float) (Gdx.graphics.getHeight() / 2.6),
+            (float) (Gdx.graphics.getWidth() / 1.267),
+            (float) (Gdx.graphics.getHeight() / 2.37)); // x, y, width, height
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InputAdapter() {
@@ -97,7 +104,7 @@ public class Level1SelectorScreen implements Screen {
                 float realY = Gdx.graphics.getHeight() - screenY;
                 if (clickableZone.contains(screenX, realY)) {
                     System.out.println("Zone was clicked");
-                    ScreenManager.levelId = "ud";
+                    levelId = "ud";
                     ScreenManager.getInstance().setScreenWithFade(ScreenType.FIRST_LEVEL, Level1SelectorScreen.this, 2f);
                 }
                 return false;
@@ -180,6 +187,11 @@ public class Level1SelectorScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
+        shapeRenderer.end();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
             ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, this, 1f);

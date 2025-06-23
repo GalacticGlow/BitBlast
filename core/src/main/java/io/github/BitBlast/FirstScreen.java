@@ -213,7 +213,7 @@ public class FirstScreen implements Screen {
                     blockList.add(new Block(Constants.block3SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block4":
-                    blockList.add(new Block(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
+                    decorationList.add(new Decoration(Constants.block4SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     break;
                 case "segmented-block5":
                     blockList.add(new Block(Constants.block5SkinPath, x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
@@ -294,7 +294,7 @@ public class FirstScreen implements Screen {
 
         initVictoryWindow();
 
-        MusicManager.load(Constants.chaozAirflowPath, false);
+        MusicManager.load(Constants.eurodancerPath, false);
         MusicManager.play();
 
 //        Timer.schedule(new Timer.Task() {
@@ -513,14 +513,14 @@ public class FirstScreen implements Screen {
 
         while (accumulator >= UPDATE_DELTA) {
             if (!player.isAlive()) {
-                //deathCameraPosition.set(camera.position);
-                //die();
+                deathCameraPosition.set(camera.position);
+                die();
             }
 
-//            if (inputIgnoreFrames > 0) {
-//                inputIgnoreFrames--;
-//                return;
-//            }
+            if (inputIgnoreFrames > 0) {
+                inputIgnoreFrames--;
+               return;
+            }
 
             update(UPDATE_DELTA);
             checkForCollisions();
@@ -682,7 +682,7 @@ public class FirstScreen implements Screen {
     public void checkForCollisions() {
         for (Spike spike : spikeList) {
             if (player.getHitBox().overlaps(spike.getHitBox())) {
-                //player.alive = false;
+                player.alive = false;
             }
         }
     }
