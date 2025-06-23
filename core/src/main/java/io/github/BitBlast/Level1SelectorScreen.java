@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
 public class Level1SelectorScreen implements Screen {
+
     private Main game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -145,7 +146,6 @@ public class Level1SelectorScreen implements Screen {
 
         MusicManager.load(Constants.ultimateDestructionPath, true);
         MusicManager.play();
-        MusicManager.setVolume(0.5f);
     }
 
     @Override
@@ -179,6 +179,10 @@ public class Level1SelectorScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, this, 1f);
+        }
     }
 
     @Override
@@ -197,6 +201,5 @@ public class Level1SelectorScreen implements Screen {
     public void dispose() {
         background.dispose();
         batch.dispose();
-        shapeRenderer.dispose();
     }
 }

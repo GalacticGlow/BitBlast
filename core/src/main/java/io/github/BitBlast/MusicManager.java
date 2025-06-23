@@ -3,9 +3,15 @@ package io.github.BitBlast;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
+
 public class MusicManager {
     private static Music currentMusic;
     private static String currentPath;
+    private static final Preferences preferences = Gdx.app.getPreferences("game_settings");
+    private static float volume = 1f; // значення за замовчуванням
 
     public static void load(String path, boolean looping) {
         if (currentPath != null && currentPath.equals(path) && currentMusic != null) {
@@ -19,7 +25,7 @@ public class MusicManager {
 
         currentMusic = Gdx.audio.newMusic(Gdx.files.internal(path));
         currentMusic.setLooping(looping);
-        currentMusic.setVolume(1f);
+        currentMusic.setVolume(getVolume()); // використовує збережену гучність
         currentPath = path;
     }
 
@@ -36,9 +42,16 @@ public class MusicManager {
     }
 
     public static void setVolume(float volume) {
+        MusicManager.volume = volume;
         if (currentMusic != null) {
             currentMusic.setVolume(volume);
         }
+        preferences.putFloat("music_volume", volume);
+        preferences.flush(); // зберігаємо на диск
+    }
+
+    public static float getVolume() {
+        return preferences.getFloat("music_volume", 1f); // якщо немає — значення за замовчуванням 1
     }
 
     public static void stop() {
@@ -67,5 +80,13 @@ public class MusicManager {
 
     public static String getCurrentPath() {
         return currentPath;
+    }
+
+    public static Music getCurrentMusic() {
+        return currentMusic;
+    }
+
+    public static boolean isPlaying() {
+        return currentMusic != null && currentMusic.isPlaying();
     }
 }

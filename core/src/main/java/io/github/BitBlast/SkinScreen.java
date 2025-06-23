@@ -4,6 +4,7 @@ import Helper.Constants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,10 +14,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class SkinScreen implements Screen {
@@ -29,6 +34,14 @@ public class SkinScreen implements Screen {
 
     private BitmapFont font;
 
+    private ImageButton skin1Button;
+    private ImageButton skin2Button;
+    private ImageButton skin3Button;
+    private ImageButton skin4Button;
+    private ImageButton skin5Button;
+    private ImageButton skin6Button;
+    private ImageButton skin7Button;
+
     private Texture skin1;
     private Texture skin2;
     private Texture skin3;
@@ -38,18 +51,30 @@ public class SkinScreen implements Screen {
     private Texture skin7;
     private Texture selectedTexture;
     private Sprite selectedSprite;
+    private Texture lockedTexture;
+    private ImageButton locker2;
+    private Sprite locker3;
+    private Sprite locker4;
+    private Sprite locker5;
+    private Sprite locker6;
+    private Sprite locker7;
+
+    private boolean skin2Unlocked = false;
+    private boolean skin3Unlocked = false;
+    private boolean skin4Unlocked = false;
+    private boolean skin5Unlocked = false;
+    private boolean skin6Unlocked = false;
+    private boolean skin7Unlocked = false;
 
     private final int SKIN_BUTTON_SIZE = 170;
 
     public int playerKeys = 0;
 
-    public static boolean skin1Unlocked = true;
-    public static boolean skin2Unlocked = false;
-    public static boolean skin3Unlocked = false;
-    public static boolean skin4Unlocked = false;
-    public static boolean skin5Unlocked = false;
-    public static boolean skin6Unlocked = false;
-    public static boolean skin7Unlocked = false;
+    Json json = new Json();
+    FileHandle file = Gdx.files.local(Constants.playerDataPath);
+    JsonReader jsonReader = new JsonReader();
+    JsonValue base = jsonReader.parse(file);
+    private int currentIcon = base.get("current_icon").asInt();
 
     public SkinScreen(Main game, OrthographicCamera camera) {
         this.camera = camera;
@@ -59,34 +84,40 @@ public class SkinScreen implements Screen {
     }
 
     public void loadKeys(){//Дмитре, використай цей метод щоб отримати кількість ключів які гравець має зараз, і в залежності скільки їх будуть доступні різні іконки. Використай те число куди треба
-        JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+        JsonValue ud_keys = base.get("ud_keys");
+        JsonValue ed_keys = base.get("ed_keys");
+        JsonValue ca_keys = base.get("ca_keys");
 
-        boolean[] ud_keys = base.get("ud_keys").asBooleanArray();
-        boolean[] ed_keys = base.get("ed_keys").asBooleanArray();
-        boolean[] ca_keys = base.get("ca_keys").asBooleanArray();
-
-        for (boolean ud_key : ud_keys) {
-            if (ud_key) {
-                playerKeys++;
+        for (JsonValue obj : ud_keys) {
+            for (JsonValue boolValue : obj) {
+                if (boolValue.asBoolean()) {
+                    playerKeys++;
+                }
             }
         }
 
-        for (boolean ed_key : ed_keys) {
-            if (ed_key) {
-                playerKeys++;
+        for (JsonValue obj : ed_keys) {
+            for (JsonValue boolValue : obj) {
+                if (boolValue.asBoolean()) {
+                    playerKeys++;
+                }
             }
         }
 
-        for (boolean ca_key : ca_keys) {
-            if (ca_key) {
-                playerKeys++;
+        for (JsonValue obj : ca_keys) {
+            for (JsonValue boolValue : obj) {
+                if (boolValue.asBoolean()) {
+                    playerKeys++;
+                }
             }
         }
     }
 
     @Override
     public void show() {
+
+        updateUnlockedSkins();
+
         Gdx.input.setInputProcessor(stage);
         background = new Texture(Gdx.files.internal(Constants.IconSelectorBackgroundPath));
 
@@ -99,105 +130,148 @@ public class SkinScreen implements Screen {
         selectedSprite = new Sprite(selectedTexture);
         selectedSprite.setSize(SKIN_BUTTON_SIZE + 40, SKIN_BUTTON_SIZE + 40);
 
-        Button.ButtonStyle skin1Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin1Style = new ImageButton.ImageButtonStyle();
         skin1 = new Texture(Gdx.files.internal(Constants.playerSkin1Path));
         skin1Style.up = new TextureRegionDrawable(new TextureRegion(skin1));
         skin1Style.down = new TextureRegionDrawable(new TextureRegion(skin1));
-        Button skin1Button = new Button(skin1Style);
+        skin1Button = new ImageButton(skin1Style);
         skin1Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin1Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 0, y);
         skin1Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin1Button.getX() - 20, skin1Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(1));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(1);
+                currentIcon = 1;
             }
         });
 
-        Button.ButtonStyle skin2Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin2Style = new ImageButton.ImageButtonStyle();
         skin2 = new Texture(Gdx.files.internal(Constants.playerSkin2Path));
         skin2Style.up = new TextureRegionDrawable(new TextureRegion(skin2));
         skin2Style.down = new TextureRegionDrawable(new TextureRegion(skin2));
-        Button skin2Button = new Button(skin2Style);
+        skin2Button = new ImageButton(skin2Style);
         skin2Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin2Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 1, y);
         skin2Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin2Button.getX() - 20, skin2Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(2));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(2);
+                currentIcon = 2;
             }
         });
 
-        Button.ButtonStyle skin3Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin3Style = new ImageButton.ImageButtonStyle();
         skin3 = new Texture(Gdx.files.internal(Constants.playerSkin3Path));
         skin3Style.up = new TextureRegionDrawable(new TextureRegion(skin3));
         skin3Style.down = new TextureRegionDrawable(new TextureRegion(skin3));
-        Button skin3Button = new Button(skin3Style);
+        skin3Button = new ImageButton(skin3Style);
         skin3Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin3Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 2, y);
         skin3Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin3Button.getX() - 20, skin3Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(3));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(3);
+                currentIcon = 3;
             }
         });
 
-        Button.ButtonStyle skin4Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin4Style = new ImageButton.ImageButtonStyle();
         skin4 = new Texture(Gdx.files.internal(Constants.playerSkin4Path));
         skin4Style.up = new TextureRegionDrawable(new TextureRegion(skin4));
         skin4Style.down = new TextureRegionDrawable(new TextureRegion(skin4));
-        Button skin4Button = new Button(skin4Style);
+        skin4Button = new ImageButton(skin4Style);
         skin4Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin4Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 3, y);
         skin4Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin4Button.getX() - 20, skin4Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(4));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(4);
+                currentIcon = 4;
             }
         });
 
-        Button.ButtonStyle skin5Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin5Style = new ImageButton.ImageButtonStyle();
         skin5 = new Texture(Gdx.files.internal(Constants.playerSkin5Path));
         skin5Style.up = new TextureRegionDrawable(new TextureRegion(skin5));
         skin5Style.down = new TextureRegionDrawable(new TextureRegion(skin5));
-        Button skin5Button = new Button(skin5Style);
+        skin5Button = new ImageButton(skin5Style);
         skin5Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin5Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 4, y);
         skin5Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin5Button.getX() - 20, skin5Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(5));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(5);
+                currentIcon = 5;
             }
         });
 
-        Button.ButtonStyle skin6Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin6Style = new ImageButton.ImageButtonStyle();
         skin6 = new Texture(Gdx.files.internal(Constants.playerSkin6Path));
         skin6Style.up = new TextureRegionDrawable(new TextureRegion(skin6));
         skin6Style.down = new TextureRegionDrawable(new TextureRegion(skin6));
-        Button skin6Button = new Button(skin6Style);
+        skin6Button = new ImageButton(skin6Style);
         skin6Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin6Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 5, y);
         skin6Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin6Button.getX() - 20, skin6Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(6));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(6);
+                currentIcon = 6;
             }
         });
 
-        Button.ButtonStyle skin7Style = new Button.ButtonStyle();
+        ImageButton.ImageButtonStyle skin7Style = new ImageButton.ImageButtonStyle();
         skin7 = new Texture(Gdx.files.internal(Constants.playerSkin7Path));
         skin7Style.up = new TextureRegionDrawable(new TextureRegion(skin7));
         skin7Style.down = new TextureRegionDrawable(new TextureRegion(skin7));
-        Button skin7Button = new Button(skin7Style);
+        skin7Button = new ImageButton(skin7Style);
         skin7Button.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
         skin7Button.setPosition(startX + (SKIN_BUTTON_SIZE + gap) * 6, y);
         skin7Button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 selectedSprite.setPosition(skin7Button.getX() - 20, skin7Button.getY() - 20);
+
+                base.get("current_icon").set(String.valueOf(7));
+                file.writeString(base.prettyPrint(JsonWriter.OutputType.json, 0), false);
+                updateCurrentIcon(7);
+                currentIcon = 7;
             }
         });
-        selectedSprite.setPosition(skin1Button.getX() - 20, skin1Button.getY() - 20);
+
+        updateCurrentIcon(currentIcon);
 
         stage.addActor(skin1Button);
+        skin1Button.toBack();
         stage.addActor(skin2Button);
+        skin2Button.toBack();
         stage.addActor(skin3Button);
+        skin3Button.toBack();
         stage.addActor(skin4Button);
+        skin4Button.toBack();
         stage.addActor(skin5Button);
+        skin5Button.toBack();
         stage.addActor(skin6Button);
+        skin6Button.toBack();
         stage.addActor(skin7Button);
+        skin7Button.toBack();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -207,6 +281,103 @@ public class SkinScreen implements Screen {
         parameter.borderColor = Color.BLACK;
         font = generator.generateFont(parameter);
         generator.dispose();
+
+        showSkinLockers();
+    }
+
+    private void showSkinLockers() {
+        lockedTexture = new Texture(Constants.lockerPath);
+        ImageButton.ImageButtonStyle lockerStyle = new ImageButton.ImageButtonStyle();
+        lockerStyle.up = new TextureRegionDrawable(new TextureRegion(lockedTexture));
+        lockerStyle.down = new TextureRegionDrawable(new TextureRegion(lockedTexture));
+
+        if (!skin2Unlocked) {
+            Button lockerButton = new Button(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin2Button.getX(), skin2Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+        if (!skin3Unlocked) {
+            Button lockerButton = new Button(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin3Button.getX(), skin3Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+        if (!skin4Unlocked) {
+            ImageButton lockerButton = new ImageButton(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin4Button.getX(), skin4Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+        if (!skin5Unlocked) {
+            ImageButton lockerButton = new ImageButton(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin5Button.getX(), skin5Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+        if (!skin6Unlocked) {
+            ImageButton lockerButton = new ImageButton(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin6Button.getX(), skin6Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+        if (!skin7Unlocked) {
+            ImageButton lockerButton = new ImageButton(lockerStyle);
+            lockerButton.setSize(SKIN_BUTTON_SIZE, SKIN_BUTTON_SIZE);
+            lockerButton.setPosition(skin7Button.getX(), skin7Button.getY());
+
+            stage.addActor(lockerButton);
+            lockerButton.toFront();
+        }
+    }
+
+    private void updateUnlockedSkins() {
+        loadKeys();
+        skin2Unlocked = playerKeys >= 1;
+        skin3Unlocked = playerKeys >= 2;
+        skin4Unlocked = playerKeys >= 3;
+        skin5Unlocked = playerKeys >= 4;
+        skin6Unlocked = playerKeys >= 6;
+        skin7Unlocked = playerKeys >= 9;
+    }
+
+    private void updateCurrentIcon(int currentIcon) {
+        switch (currentIcon) {
+            case 1:
+                selectedSprite.setPosition(skin1Button.getX() - 20, skin1Button.getY() - 20);
+                break;
+            case 2:
+                selectedSprite.setPosition(skin2Button.getX() - 20, skin2Button.getY() - 20);
+                break;
+            case 3:
+                selectedSprite.setPosition(skin3Button.getX() - 20, skin3Button.getY() - 20);
+                break;
+            case 4:
+                selectedSprite.setPosition(skin4Button.getX() - 20, skin4Button.getY() - 20);
+                break;
+            case 5:
+                selectedSprite.setPosition(skin5Button.getX() - 20, skin5Button.getY() - 20);
+                break;
+            case 6:
+                selectedSprite.setPosition(skin6Button.getX() - 20, skin6Button.getY() - 20);
+                break;
+            case 7:
+                selectedSprite.setPosition(skin7Button.getX() - 20, skin7Button.getY() - 20);
+                break;
+            default:
+                selectedSprite.setPosition(skin1Button.getX() - 20, skin1Button.getY() - 20);
+                break;
+        }
     }
 
     @Override
@@ -231,7 +402,6 @@ public class SkinScreen implements Screen {
             ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 1.5f);
         }
     }
-
 
     @Override
     public void resize(int i, int i1) {

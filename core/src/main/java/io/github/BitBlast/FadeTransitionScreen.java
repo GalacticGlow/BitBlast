@@ -37,44 +37,45 @@ public class FadeTransitionScreen implements Screen {
         this.duration = duration;
     }
 
-    private void prepare() {
+    private void prepareFromScreen() {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
 
-        // Render fromScreen
         fromScreen.show();
         fromScreen.resize(w, h);
+
         fromFbo = new FrameBuffer(Pixmap.Format.RGBA8888, w, h, false);
         fromFbo.begin();
         fromScreen.render(0);
         fromFbo.end();
         fromTexture = fromFbo.getColorBufferTexture();
 
-        fromScreen.hide(); // щоб вимкнути input
+        fromScreen.hide(); // відключаємо input
+    }
 
-        // Render toScreen
+    private void prepareToScreen() {
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
+
         toScreen.show();
         toScreen.resize(w, h);
-        if (toScreen instanceof FirstScreen) {
-            ((FirstScreen) toScreen).update(0.01f); // швидкий update перед render
-        }
+
         toFbo = new FrameBuffer(Pixmap.Format.RGBA8888, w, h, false);
         toFbo.begin();
         toScreen.render(0);
         toFbo.end();
         toTexture = toFbo.getColorBufferTexture();
-
-        prepared = true;
     }
 
 
     @Override
-    public void render(float v) {
+    public void render(float delta) {
         if (!prepared) {
-            prepare();
+            prepareFromScreen();
+            prepared = true;
         }
 
-        time += v;
+        time += delta;
         float halfDuration = duration / 2;
         float alpha;
 
@@ -85,9 +86,16 @@ public class FadeTransitionScreen implements Screen {
         batch.setColor(Color.WHITE);
 
         if (time < halfDuration) {
+            // Показуємо fromScreen fade-out
             batch.draw(fromTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 1, 1);
             alpha = time / halfDuration;
         } else {
+            // Після половини часу — готуємо toScreen (один раз)
+            if (toTexture == null) {
+                prepareToScreen();
+            }
+
+            // Показуємо toScreen fade-in
             batch.draw(toTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 1, 1);
             alpha = 1f - ((time - halfDuration) / halfDuration);
         }
@@ -102,10 +110,11 @@ public class FadeTransitionScreen implements Screen {
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
         if (time >= duration) {
-            ScreenManager.getInstance().setScreen(ScreenManager.getInstance().getScreenTypeByScreen(toScreen));
+            game.setScreen(toScreen); // тепер безпосередньо активуємо екран
             dispose();
         }
     }
+
 
     @Override public void show() {}
     @Override public void resize(int width, int height) {}

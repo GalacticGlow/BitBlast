@@ -53,6 +53,7 @@ public class Constants {
     public static String greyedCogButtonPath = "Sprites/Menu Objects/Cog-Button-Greyed.png";
 
     public static String IconSelectorBackgroundPath = "Sprites/Menu Objects/Icon Selector/Background.png";
+    public static String lockerPath = "Sprites/Menu Objects/Icon Selector/Lock.png";
 
     public static String chainDecoPath = "Sprites/Deco/Chain-1.png";
     public static String spikeDeco1Path = "Sprites/Deco/Spikedeco-1.png";
@@ -64,6 +65,12 @@ public class Constants {
     public static String ultimateDestructionPath = "Sounds/Music/1-ultimate-destruction.mp3";
     public static String eurodancerPath = "Sounds/Music/2-eurodancer.mp3";
     public static String chaozAirflowPath = "Sounds/Music/3-chaoz-airflow.mp3";
+
+    public static String levelCompleteOverlayPath = "Sprites/Menu Objects/Level Complete/Level-Complete-Overlay.png";
+    public static String menuButtonPath = "Sprites/Menu Objects/Level Complete/Menu-Button.png";
+    public static String menuButtonGreyedPath = "Sprites/Menu Objects/Level Complete/Menu-Button-Greyed-out.png";
+    public static String replayButtonPath = "Sprites/Menu Objects/Level Complete/Replay-Button.png";
+    public static String replayButtonGreyedPath = "Sprites/Menu Objects/Level Complete/Replay-Button-Greyed-out.png";
 
     public static final int worldWidth = 20;
     public static final int worldHeight = 12;

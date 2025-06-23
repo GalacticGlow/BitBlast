@@ -158,6 +158,9 @@ public class Level2SelectorScreen implements Screen {
 
         stage.addActor(arrowRight);
         stage.addActor(arrowLeft);
+
+        MusicManager.load(Constants.eurodancerPath, true);
+        MusicManager.play();
     }
 
     @Override
@@ -166,6 +169,12 @@ public class Level2SelectorScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 0.75f);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL1_SELECT, Level2SelectorScreen.this, 1f);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL3_SELECT, Level2SelectorScreen.this, 1f);
         }
 
         batch.begin();
@@ -192,7 +201,10 @@ public class Level2SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-        // Малювання клікабельної зони як рамки (виділення)
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
+//        shapeRenderer.end();
     }
 
     @Override

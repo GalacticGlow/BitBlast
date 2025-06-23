@@ -58,12 +58,12 @@ public class ScreenManager {
     }
 
     public void setScreenWithFade(ScreenType type, Screen fromScreen, float duration) {
-        Screen screen = screens.get(type);
-        if (screen == null) {
-            screen = createScreen(type);
-            screens.put(type, screen);
+        Screen toScreen = screens.get(type);
+        if (toScreen == null) {
+            toScreen = createScreen(type);
+            screens.put(type, toScreen);
         }
-        game.setScreen(new FadeTransitionScreen(game, fromScreen, screen, duration));
+        game.setScreen(new FadeTransitionScreen(game, fromScreen, toScreen, duration));
     }
 
     public ScreenType getScreenTypeByScreen(Screen screen) {

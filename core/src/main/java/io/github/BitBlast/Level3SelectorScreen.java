@@ -143,6 +143,10 @@ public class Level3SelectorScreen implements Screen {
         });
 
         stage.addActor(arrowLeft);
+
+        MusicManager.load(Constants.chaozAirflowPath, true);
+        MusicManager.setVolume(0.5f);
+        MusicManager.play();
     }
 
     @Override
@@ -151,6 +155,9 @@ public class Level3SelectorScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             ScreenManager.getInstance().setScreenWithFade(ScreenType.MENU, this, 0.75f);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, Level3SelectorScreen.this, 1f);
         }
 
         batch.begin();
@@ -177,7 +184,10 @@ public class Level3SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-        // Малювання клікабельної зони як рамки (виділення)
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
+//        shapeRenderer.end();
     }
 
     @Override

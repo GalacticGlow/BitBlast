@@ -10,19 +10,32 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.math.Vector3;
 
 import java.math.BigDecimal;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TimerTask;
+
+import com.badlogic.gdx.utils.Timer;
+
 
 public class FirstScreen implements Screen {
     private final Main game;
@@ -35,7 +48,10 @@ public class FirstScreen implements Screen {
     private Texture backgroundTexture;
     private Texture groundTexture;
 
-    private int inputIgnoreFrames = 10;
+    private int inputIgnoreFrames = 5;
+
+    private int musicIgnoreFrames = 15;
+    private boolean musicStarted = false;
 
     public float baseY;
 
@@ -76,6 +92,17 @@ public class FirstScreen implements Screen {
     public Vector3 deathCameraPosition = new Vector3();
 
     private int lastColorIndex = -1;
+
+    private Stage victoryWindowStage;
+    private boolean showVictoryWindow = false;
+    private Image victoryWindow;
+    private BitmapFont levelCompleteLabel;
+    private Texture keyTexture;
+    private Texture keyGreyedTexture;
+    private Image key1Complete;
+    private Image key2Complete;
+    private Image key3Complete;
+    private boolean[] json_keys;
 
     public float maxX = 0;
     public float curPercentage = 0f;
@@ -231,10 +258,13 @@ public class FirstScreen implements Screen {
 
     @Override
     public void show() {
+        int currIcon = base.get("current_icon").asInt();
+        String iconPath = "Sprites/Icons/Cubes/Cube-" + currIcon + ".png";
+
         Gdx.input.setInputProcessor(null);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (player == null) {
-            this.player = new Player(Constants.playerSkin1Path, Constants.startX, Constants.startY);
+            this.player = new Player(iconPath, Constants.startX, Constants.startY);
         }
         baseY = Constants.startY;
         font = new BitmapFont(Gdx.files.internal("font.fnt"), false);
@@ -249,10 +279,137 @@ public class FirstScreen implements Screen {
         groundTexture = new Texture(Constants.groundPath);
         generateLevel("Sprites/UltimateDestruction.json");
 
-        MusicManager.rewind();
-        MusicManager.load(Constants.ultimateDestructionPath, false);
-        MusicManager.setVolume(1.0f);
+        MusicManager.stop();
+
+        initVictoryWindow();
+
+        MusicManager.load(Constants.chaozAirflowPath, false);
         MusicManager.play();
+
+//        Timer.schedule(new Timer.Task() {
+//            @Override
+//            public void run() {
+//                MusicManager.load(Constants.chaozAirflowPath, false);
+//                MusicManager.play();
+//            }
+//        }, 0.7f);
+
+//        MusicManager.load(Constants.chaozAirflowPath, false);
+//        MusicManager.play();
+    }
+
+    private void initVictoryWindow() {
+        updateKeys();
+        victoryWindowStage = new Stage(new ScreenViewport());
+
+        Texture victoryWindowTexture = new Texture(Constants.levelCompleteOverlayPath);
+        victoryWindow = new Image(victoryWindowTexture);
+        victoryWindow.setSize((float) (victoryWindow.getWidth() * 5.5), (float) (victoryWindow.getHeight() * 5.5));
+        victoryWindow.setPosition(
+            (Gdx.graphics.getWidth() - victoryWindow.getWidth()) / 2,
+            (Gdx.graphics.getHeight() - victoryWindow.getHeight()) / 2
+        );
+
+        Texture exitButtonTexture = new Texture(Constants.menuButtonPath);
+        Texture exitButtonGreyedTexture = new Texture(Constants.menuButtonGreyedPath);
+        Button.ButtonStyle exitStyle = new Button.ButtonStyle();
+        exitStyle.up = new TextureRegionDrawable(new TextureRegion(exitButtonTexture));
+        exitStyle.down = new TextureRegionDrawable(new TextureRegion(exitButtonGreyedTexture));
+        Button exitButton = new Button(exitStyle);
+        exitButton.setSize((float) (exitButton.getWidth() * 5.5), (float) (exitButton.getHeight() * 5.5));
+        exitButton.setPosition(
+            (float) (victoryWindow.getX() + (victoryWindow.getWidth() * 0.75 - exitButton.getWidth()/2)),
+            victoryWindow.getY() - exitButton.getHeight()/4
+        );
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // TODO
+            }
+        });
+
+        Texture replayButtonTexture = new Texture(Constants.replayButtonPath);
+        Texture replayButtonGreyedTexture = new Texture(Constants.replayButtonGreyedPath);
+        Button.ButtonStyle replayStyle = new Button.ButtonStyle();
+        replayStyle.up = new TextureRegionDrawable(new TextureRegion(replayButtonTexture));
+        replayStyle.down = new TextureRegionDrawable(new TextureRegion(replayButtonGreyedTexture));
+        Button replayButton = new Button(replayStyle);
+        replayButton.setSize((float) (replayButton.getWidth() * 5.5), (float) (replayButton.getHeight() * 5.5));
+        replayButton.setPosition(
+            victoryWindow.getX() + (victoryWindow.getWidth()/4 - replayButton.getWidth()/2),
+            victoryWindow.getY() - replayButton.getHeight()/4
+        );
+        replayButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // TODO
+            }
+        });
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 75;
+        parameter.color = Color.WHITE;
+        parameter.borderWidth = 2;
+        parameter.borderColor = Color.BLACK;
+        levelCompleteLabel = generator.generateFont(parameter);
+        generator.dispose();
+
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = levelCompleteLabel;
+        style.fontColor = Color.WHITE;
+        Label victoryLabel = new Label("Level complete!", style);
+        victoryLabel.setPosition(
+            victoryWindow.getX() + (victoryWindow.getWidth() - victoryLabel.getWidth())/2,
+            (float) (victoryWindow.getY() + victoryWindow.getHeight() - victoryWindow.getHeight() / 2.7)
+        );
+
+        keyTexture = new Texture(Constants.keyPath);
+        keyGreyedTexture = new Texture(Constants.keyGreyedPath);
+
+        key1Complete = new Image(json_keys[0] ? keyTexture : keyGreyedTexture);
+        key2Complete = new Image(json_keys[1] ? keyTexture : keyGreyedTexture);
+        key3Complete = new Image(json_keys[2] ? keyTexture : keyGreyedTexture);
+
+        key1Complete.setSize((float) (keyGreyedTexture.getWidth() * 10), (float) (keyGreyedTexture.getHeight() * 10));
+        key1Complete.setPosition(
+            (float) ((victoryWindow.getX() + (victoryWindow.getWidth() - key1Complete.getWidth())/2) - key1Complete.getWidth()*1.5),
+            (float) (victoryWindow.getY() + victoryWindow.getHeight() - victoryWindow.getHeight() / 1.4)
+        );
+        key2Complete.setSize((float) (keyGreyedTexture.getWidth() * 10), (float) (keyGreyedTexture.getHeight() * 10));
+        key2Complete.setPosition(
+            victoryWindow.getX() + (victoryWindow.getWidth() - key2Complete.getWidth())/2,
+            (float) (victoryWindow.getY() + victoryWindow.getHeight() - victoryWindow.getHeight() / 1.4)
+        );
+        key3Complete.setSize((float) (keyGreyedTexture.getWidth() * 10), (float) (keyGreyedTexture.getHeight() * 10));
+        key3Complete.setPosition(
+            (float) ((victoryWindow.getX() + (victoryWindow.getWidth() - key3Complete.getWidth())/2) + key3Complete.getWidth()*1.5),
+            (float) (victoryWindow.getY() + victoryWindow.getHeight() - victoryWindow.getHeight() / 1.4)
+        );
+
+        // Міняє текстуру ключа
+        // key1Complete.setDrawable(new TextureRegionDrawable(new TextureRegion(keyTexture)));
+
+        victoryWindowStage.addActor(victoryWindow);
+        victoryWindowStage.addActor(replayButton);
+        victoryWindowStage.addActor(exitButton);
+        victoryWindowStage.addActor(victoryLabel);
+        victoryWindowStage.addActor(key1Complete);
+        victoryWindowStage.addActor(key2Complete);
+        victoryWindowStage.addActor(key3Complete);
+    }
+
+    public void updateKeys(){
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal(Constants.playerDataPath));
+
+        JsonValue keysArray = base.get("ed_keys");
+        json_keys = new boolean[3];
+
+        for (int i = 0; i < keysArray.size; i++) {
+            JsonValue keyObj = keysArray.get(i);
+            json_keys[i] = keyObj.child().asBoolean();
+        }
     }
 
     private void updateBackgroundColor(float delta) {
@@ -337,6 +494,9 @@ public class FirstScreen implements Screen {
     public void render(float delta) {
         if (player == null || backgroundTexture == null || groundTexture == null) return;
 
+        //showVictoryWindow = true;
+
+
         if (delta > 0.25f) delta = 0.25f;
         accumulator += delta;
 
@@ -345,6 +505,11 @@ public class FirstScreen implements Screen {
                 //deathCameraPosition.set(camera.position);
                 //die();
             }
+
+//            if (inputIgnoreFrames > 0) {
+//                inputIgnoreFrames--;
+//                return;
+//            }
 
             update(UPDATE_DELTA);
             checkForCollisions();
@@ -445,6 +610,16 @@ public class FirstScreen implements Screen {
         batch.end();
         curPercentage = new BigDecimal((player.getX()/maxX) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 
+        if(curPercentage >= 100) {
+            victoryWindowStage.act(delta);
+            victoryWindowStage.draw();
+        }
+
+        if (showVictoryWindow) {
+            victoryWindowStage.act(delta);
+            victoryWindowStage.draw();
+        }
+
         if (redFlashActive) {
             redFlashTimer -= delta;
 
@@ -482,13 +657,10 @@ public class FirstScreen implements Screen {
     }
 
     public void update(float delta) {
+        if (paused) return;
+
         batch.setProjectionMatrix(camera.combined);
         cameraUpdate();
-
-        if (inputIgnoreFrames > 0) {
-            inputIgnoreFrames--;
-            return;
-        }
 
         if (!redFlashActive && !paused) {
             player.update(delta, blockList, jumpPadList, orbList, curKeys);
@@ -552,7 +724,6 @@ public class FirstScreen implements Screen {
             camera.position.x = targetX;
             camera.position.y += (targetY - camera.position.y) * smoothingY;
         }
-
         camera.update();
     }
 
