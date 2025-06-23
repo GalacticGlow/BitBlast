@@ -654,7 +654,7 @@ public class FirstScreen implements Screen {
             percentX = player.getX() + 3*Constants.oneBlockWidth;
         }
 
-        Vector3 screenPos = new Vector3(0, 100, 0);
+        Vector3 screenPos = new Vector3(0, 50, 0);
         camera.unproject(screenPos);
         float percentY = screenPos.y;
 
@@ -666,7 +666,7 @@ public class FirstScreen implements Screen {
 
         if (curPercentage >= 100 && !showVictoryWindow) {
             showVictoryWindow = true;
-            Gdx.input.setInputProcessor(victoryWindowStage); // ← Ось це найважливіше!
+            Gdx.input.setInputProcessor(victoryWindowStage);
         }
 
         if (showVictoryWindow) {
