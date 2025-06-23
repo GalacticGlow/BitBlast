@@ -32,6 +32,7 @@ import com.badlogic.gdx.math.Vector3;
 import java.math.BigDecimal;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -266,10 +267,25 @@ public class FirstScreen implements Screen {
         showVictoryWindow = false;
         curPercentage = 0;
         paused = false;
+        curLevel = ScreenManager.levelId;
+        spikeList = new ArrayList<>();
+        blockList = new ArrayList<>();
+        decorationList = new ArrayList<>();
+        curKeys = new ArrayList<>();
+        allKeys = new ArrayList<>();
+        orbList = new ArrayList<>();
+        jumpPadList = new ArrayList<>();
+
+//        if (this.player != null) {
+//            player.updatePosition(Constants.startX, Constants.startY);
+//        }
 
         Gdx.input.setInputProcessor(null);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (player == null) {
+            this.player = new Player(iconPath, Constants.startX, Constants.startY);
+        } else {
+            this.player = null;
             this.player = new Player(iconPath, Constants.startX, Constants.startY);
         }
         baseY = Constants.startY;
