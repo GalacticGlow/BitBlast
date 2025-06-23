@@ -58,11 +58,8 @@ public class ScreenManager {
 
     public void setScreenWithFadeLevel(ScreenType type, Screen fromScreen, float duration, String levelId) {
         this.levelId = levelId;
-        Screen toScreen = screens.get(type);
-        if (toScreen == null) {
-            toScreen = createScreen(type);
-            screens.put(type, toScreen);
-        }
+        Screen toScreen = createScreen(type);
+        screens.put(type, toScreen);
         game.setScreen(new FadeTransitionScreen(game, fromScreen, toScreen, duration));
     }
 
