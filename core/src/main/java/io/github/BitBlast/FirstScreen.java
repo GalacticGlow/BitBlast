@@ -477,7 +477,7 @@ public class FirstScreen implements Screen {
                 root.addProperty("completed", true);
 
                 // For writing, use local file (writable storage)
-                FileHandle writableFile = Gdx.files.local(filePath);
+                FileHandle writableFile = Gdx.files.absolute(filePath);
 
                 // Write the updated JSON back to writable file
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
