@@ -117,7 +117,7 @@ public class Level2SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\assets\\Sprites\\Eurodancer.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\Sprites\\Eurodancer.json"));
         completed = base.get("completed").asBoolean();
 
         System.out.println(completed);
@@ -211,10 +211,6 @@ public class Level2SelectorScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-        shapeRenderer.end();
     }
 
     @Override

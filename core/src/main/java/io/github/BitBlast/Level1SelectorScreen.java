@@ -117,7 +117,7 @@ public class Level1SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\assets\\Sprites\\UltimateDestruction.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\Sprites\\UltimateDestruction.json"));
         System.out.println(base);
         completed = base.get("completed").asBoolean();
 
@@ -191,11 +191,6 @@ public class Level1SelectorScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(clickableZone.x, clickableZone.y, clickableZone.width, clickableZone.height);
-        shapeRenderer.end();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
             ScreenManager.getInstance().setScreenWithFade(ScreenType.LEVEL2_SELECT, this, 0.5f);

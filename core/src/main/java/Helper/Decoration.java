@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Decoration {
     public Sprite sprite;
-    public Rectangle hitBox;
 
     public float decoWidth;
     public float decoHeight;
