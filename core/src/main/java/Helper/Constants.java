@@ -3,7 +3,7 @@ package Helper;
 import com.badlogic.gdx.Gdx;
 
 public class Constants {
-    public static String playerDataPath = "C:\\IntelliJ Java BS\\BitBlast\\assets\\Sprites\\player_data.json";
+    public static String playerDataPath = System.getProperty("user.dir") + "\\assets\\Sprites\\player_data.json";
 
     public static String playerSkin1Path = "Sprites/Icons/Cubes/Cube-1.png";
     public static String playerSkin2Path = "Sprites/Icons/Cubes/Cube-2.png";
