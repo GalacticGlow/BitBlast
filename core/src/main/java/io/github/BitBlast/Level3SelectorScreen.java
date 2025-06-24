@@ -117,7 +117,7 @@ public class Level3SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\Sprites\\ChaozAirflow.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\assets\\Sprites\\ChaozAirflow.json"));
         completed = base.get("completed").asBoolean();
 
         System.out.println(completed);

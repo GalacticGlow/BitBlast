@@ -177,7 +177,7 @@ public class FirstScreen implements Screen {
 
     public void generateLevel(String fileName) {
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal(fileName));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(fileName));
 
         JsonValue layout = base.get("layout");
         JsonValue colorsArray = base.get("colors");
@@ -278,7 +278,6 @@ public class FirstScreen implements Screen {
                 case "key":
                     curKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
                     allKeys.add(new Key(x, y, Constants.oneBlockWidth, Constants.oneBlockHeight));
-                    System.out.println("Key was generated");
                     break;
             }
             if (x > maxX){
@@ -323,13 +322,13 @@ public class FirstScreen implements Screen {
         if (!levelGenerated) {
             switch (curLevel) {
                 case "ud":
-                    generateLevel("Sprites/UltimateDestruction.json");
+                    generateLevel(System.getProperty("user.dir") + "\\assets\\Sprites\\UltimateDestruction.json");
                     break;
                 case "ed":
-                    generateLevel("Sprites/Eurodancer.json");
+                    generateLevel(System.getProperty("user.dir") + "\\assets\\Sprites\\Eurodancer.json");
                     break;
                 case "ca":
-                    generateLevel("Sprites/ChaozAirflow.json");
+                    generateLevel(System.getProperty("user.dir") + "\\assets\\Sprites\\ChaozAirflow.json");
                     break;
             }
             levelGenerated = true;
@@ -466,7 +465,7 @@ public class FirstScreen implements Screen {
     public void markLevelAsCompletedWithGson(String filePath) {
         try {
             // Use LibGDX to get the file handle for reading from internal assets
-            FileHandle file = Gdx.files.internal(filePath);
+            FileHandle file = Gdx.files.absolute(filePath);
 
             // Read the JSON using InputStreamReader from LibGDX file handle
             InputStreamReader reader = new InputStreamReader(file.read());
@@ -726,13 +725,13 @@ public class FirstScreen implements Screen {
             if (!savedComplete) {
                 switch (curLevel) {
                     case "ud":
-                        markLevelAsCompletedWithGson("Sprites/UltimateDestruction.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\UltimateDestruction.json");
                         break;
                     case "ed":
-                        markLevelAsCompletedWithGson("Sprites/Eurodancer.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\Eurodancer.json");
                         break;
                     case "ca":
-                        markLevelAsCompletedWithGson("Sprites/ChaozAirflow.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\ChaozAirflow.json");
                         break;
                 }
                 savedComplete = true;
@@ -747,13 +746,13 @@ public class FirstScreen implements Screen {
             if (!savedComplete) {
                 switch (curLevel) {
                     case "ud":
-                        markLevelAsCompletedWithGson("Sprites/UltimateDestruction.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\UltimateDestruction.json");
                         break;
                     case "ed":
-                        markLevelAsCompletedWithGson("Sprites/Eurodancer.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\Eurodancer.json");
                         break;
                     case "ca":
-                        markLevelAsCompletedWithGson("Sprites/ChaozAirflow.json");
+                        markLevelAsCompletedWithGson(System.getProperty("user.dir") + "\\assets\\Sprites\\ChaozAirflow.json");
                         break;
                 }
                 savedComplete = true;

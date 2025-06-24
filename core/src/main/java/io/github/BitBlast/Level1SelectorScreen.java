@@ -117,7 +117,7 @@ public class Level1SelectorScreen implements Screen {
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\Sprites\\UltimateDestruction.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.absolute(System.getProperty("user.dir") + "\\assets\\Sprites\\UltimateDestruction.json"));
         System.out.println(base);
         completed = base.get("completed").asBoolean();
 

@@ -1,6 +1,6 @@
 {
   "level_name" : "Ultimate Destruction",
-  "completed" : "no",
+  "completed" : false,
   "colors" : ["BLUE", "MAGENTA", "PURPLE", "PINK", "RED", "BLACK", "BLUE", "GREEN"],
   "color_trigger_interval" : 71,
   "layout" : [
