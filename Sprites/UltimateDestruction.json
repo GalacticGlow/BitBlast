@@ -1,6 +1,6 @@
 {
   "level_name": "Ultimate Destruction",
-  "completed": false,
+  "completed": true,
   "colors": [
     "BLUE",
     "MAGENTA",
@@ -16,6 +16,21 @@
     {
       "type": "spike",
       "x": 18,
+      "y": 0
+    },
+    {
+      "type": "key",
+      "x": 23,
+      "y": 0
+    },
+    {
+      "type": "key",
+      "x": 28,
+      "y": 0
+    },
+    {
+      "type": "key",
+      "x": 33,
       "y": 0
     }
   ]

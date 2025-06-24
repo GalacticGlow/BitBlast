@@ -45,6 +45,7 @@ public class Level3SelectorScreen implements Screen {
     private ShapeRenderer shapeRenderer;
 
     public boolean[] ca_keys;
+    public boolean completed;
 
     public Level3SelectorScreen(Main game, OrthographicCamera camera) {
         this.game = game;
@@ -87,7 +88,6 @@ public class Level3SelectorScreen implements Screen {
         nameFont = generator.generateFont(parameter);
         generator.dispose();
 
-
         // Clickable zone to start game
         clickableZone = new Rectangle(
             (float) (Gdx.graphics.getWidth() / 9.5),
@@ -116,7 +116,13 @@ public class Level3SelectorScreen implements Screen {
         keyTexture = new Texture(Constants.keyPath);
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
-        checkmark = new Sprite(checkmarkGreyedTexture);
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.local("C:\\IntelliJ Java BS\\BitBlast\\assets\\Sprites\\ChaozAirflow.json"));
+        completed = base.get("completed").asBoolean();
+
+        System.out.println(completed);
+
+        checkmark = new Sprite(completed ? checkmarkTexture : checkmarkGreyedTexture);
         key1 = new Sprite(ca_keys[0] ? keyTexture : keyGreyedTexture);
         key2 = new Sprite(ca_keys[1] ? keyTexture : keyGreyedTexture);
         key3 = new Sprite(ca_keys[2] ? keyTexture : keyGreyedTexture);
@@ -148,8 +154,8 @@ public class Level3SelectorScreen implements Screen {
 
         stage.addActor(arrowLeft);
 
-        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCAMenuMusicPath : Constants.chaozAirflowPath, false);
-        MusicManager.setVolume(0.5f);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCAMenuMusicPath : Constants.chaozAirflowPath, true);
+        MusicManager.setVolume(0.8f);
         MusicManager.play();
     }
 

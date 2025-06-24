@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.Vector3;
 
+import java.io.*;
 import java.math.BigDecimal;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
@@ -43,10 +44,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +118,7 @@ public class FirstScreen implements Screen {
     private boolean[] json_keys;
 
     private boolean levelGenerated = false;
-    private boolean keysSaved = false;
+    private boolean savedComplete = false;
 
     public float maxX = 0;
     public float curPercentage = 0f;
@@ -327,44 +324,30 @@ public class FirstScreen implements Screen {
             switch (curLevel) {
                 case "ud":
                     generateLevel("Sprites/UltimateDestruction.json");
-                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDLevelMusicPath : Constants.ultimateDestructionPath, false);
                     break;
                 case "ed":
                     generateLevel("Sprites/Eurodancer.json");
-                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoEDLevelMusicPath : Constants.eurodancerPath, false);
                     break;
                 case "ca":
                     generateLevel("Sprites/ChaozAirflow.json");
-                    MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCALevelMusicPath : Constants.chaozAirflowPath, false);
                     break;
             }
             levelGenerated = true;
         }
 
-        MusicManager.stop();
-
         initVictoryWindow();
 
+        MusicManager.stop();
+
         if (curLevel.equals("ud")) {
-            MusicManager.load(Constants.ultimateDestructionPath, false);
+            MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDLevelMusicPath : Constants.ultimateDestructionPath, true);
         } else if (curLevel.equals("ed")) {
-            MusicManager.load(Constants.eurodancerPath, false);
+            MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoEDLevelMusicPath : Constants.eurodancerPath, true);
         } else if (curLevel.equals("ca")) {
-            MusicManager.load(Constants.chaozAirflowPath, false);
+            MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoCALevelMusicPath : Constants.chaozAirflowPath, true);
         }
         MusicManager.rewind();
         MusicManager.play();
-
-//        Timer.schedule(new Timer.Task() {
-//            @Override
-//            public void run() {
-//                MusicManager.load(Constants.chaozAirflowPath, false);
-//                MusicManager.play();
-//            }
-//        }, 0.7f);
-
-//        MusicManager.load(Constants.chaozAirflowPath, false);
-//        MusicManager.play();
     }
 
     private void initVictoryWindow() {
@@ -478,6 +461,39 @@ public class FirstScreen implements Screen {
         victoryWindowStage.addActor(key3Complete);
 
         paused = false;
+    }
+
+    public void markLevelAsCompletedWithGson(String filePath) {
+        try {
+            // Use LibGDX to get the file handle for reading from internal assets
+            FileHandle file = Gdx.files.internal(filePath);
+
+            // Read the JSON using InputStreamReader from LibGDX file handle
+            InputStreamReader reader = new InputStreamReader(file.read());
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            reader.close();
+
+            // Check and update "completed" if false
+            if (root.has("completed") && !root.get("completed").getAsBoolean()) {
+                root.addProperty("completed", true);
+
+                // For writing, use local file (writable storage)
+                FileHandle writableFile = Gdx.files.local(filePath);
+
+                // Write the updated JSON back to writable file
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Writer writer = new OutputStreamWriter(writableFile.write(false));
+                gson.toJson(root, writer);
+                writer.flush();
+                writer.close();
+
+                System.out.println("Level marked as completed.");
+            } else {
+                System.out.println("Level is already completed or missing 'completed' field.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateKeys(){
@@ -695,24 +711,53 @@ public class FirstScreen implements Screen {
             showVictoryWindow = true;
             Gdx.input.setInputProcessor(victoryWindowStage);
         }
-        if(curPercentage >= 100) {
-            System.out.println(curKeys);
-            victoryWindowStage.act(delta);
-            victoryWindowStage.draw();
+        if (curPercentage >= 100) {
             try {
                 saveKeysWithGson();
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
-            keysSaved = true;
+
+            updateKeys();
+            victoryWindowStage.act(delta);
+            victoryWindowStage.draw();
+
+            if (!savedComplete) {
+                switch (curLevel) {
+                    case "ud":
+                        markLevelAsCompletedWithGson("Sprites/UltimateDestruction.json");
+                        break;
+                    case "ed":
+                        markLevelAsCompletedWithGson("Sprites/Eurodancer.json");
+                        break;
+                    case "ca":
+                        markLevelAsCompletedWithGson("Sprites/ChaozAirflow.json");
+                        break;
+                }
+                savedComplete = true;
+            }
         }
 
         if (showVictoryWindow) {
-            System.out.println(curKeys);
+            updateKeys();
             victoryWindowStage.act(delta);
             victoryWindowStage.draw();
-            keysSaved = true;
+
+            if (!savedComplete) {
+                switch (curLevel) {
+                    case "ud":
+                        markLevelAsCompletedWithGson("Sprites/UltimateDestruction.json");
+                        break;
+                    case "ed":
+                        markLevelAsCompletedWithGson("Sprites/Eurodancer.json");
+                        break;
+                    case "ca":
+                        markLevelAsCompletedWithGson("Sprites/ChaozAirflow.json");
+                        break;
+                }
+                savedComplete = true;
+            }
         }
 
         if (redFlashActive) {

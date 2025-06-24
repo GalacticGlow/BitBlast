@@ -1,6 +1,6 @@
 {
   "level_name" : "Eurodancer",
-  "completed" : "no",
+  "completed" : false,
   "colors" : ["GREEN", "YELLOW", "RED", "ORANGE", "BLUE", "PURPLE"],
   "color_trigger_interval" : 66,
   "layout" : [

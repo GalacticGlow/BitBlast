@@ -2,7 +2,6 @@ package io.github.BitBlast;
 
 import Helper.Constants;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import java.io.File;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Level1SelectorScreen implements Screen {
@@ -48,6 +46,7 @@ public class Level1SelectorScreen implements Screen {
     private ShapeRenderer shapeRenderer;
 
     public boolean[] ud_keys;
+    public boolean completed;
 
     public Level1SelectorScreen(Main game, OrthographicCamera camera) {
         this.game = game;
@@ -117,7 +116,14 @@ public class Level1SelectorScreen implements Screen {
         keyTexture = new Texture(Constants.keyPath);
         keyGreyedTexture = new Texture(Constants.keyGreyedPath);
 
-        checkmark = new Sprite(checkmarkGreyedTexture);
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.absolute("C:\\IntelliJ Java BS\\BitBlast\\assets\\Sprites\\UltimateDestruction.json"));
+        System.out.println(base);
+        completed = base.get("completed").asBoolean();
+
+        System.out.println(completed);
+
+        checkmark = new Sprite(completed ? checkmarkTexture : checkmarkGreyedTexture);
         key1 = new Sprite(ud_keys[0] ? keyTexture : keyGreyedTexture);
         key2 = new Sprite(ud_keys[1] ? keyTexture : keyGreyedTexture);
         key3 = new Sprite(ud_keys[2] ? keyTexture : keyGreyedTexture);
@@ -150,7 +156,7 @@ public class Level1SelectorScreen implements Screen {
         });
         stage.addActor(arrowRight);
 
-        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDMenuMusicPath : Constants.ultimateDestructionPath, false);
+        MusicManager.load(MusicManager.jojoMusicEnabled ? Constants.jojoUDMenuMusicPath : Constants.ultimateDestructionPath, true);
         MusicManager.play();
     }
 

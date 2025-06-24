@@ -13,7 +13,7 @@ public class MusicManager {
     private static final Preferences preferences = Gdx.app.getPreferences("game_settings");
     private static float volume = 1f; // значення за замовчуванням
 
-    public static boolean jojoMusicEnabled = true;
+    public static boolean jojoMusicEnabled = false;
 
     public static void load(String path, boolean looping) {
         if (currentPath != null && currentPath.equals(path) && currentMusic != null) {

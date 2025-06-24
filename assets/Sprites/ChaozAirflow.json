@@ -1,6 +1,6 @@
 {
   "level_name" : "Chaoz Airflow",
-  "completed" : "no",
+  "completed" : false,
   "colors" : ["RED", "ORANGE", "YELLOW", "RED", "MAGENTA", "PINK", "PURPLE", "MAGENTA", "BLACK", "GREEN", "YELLOW"],
   "color_trigger_interval" : 57,
   "layout" : [
